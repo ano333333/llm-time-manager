@@ -96,18 +96,33 @@ flowchart LR
 
 ---
 
-## 5. 画面遷移（テキスト図）
+## 5. 画面遷移
 
-```
-[ホーム] --「相談する」--> [チャット]
-[チャット] --「タスク化」--> [タスク詳細(新規)] --保存--> [タスク一覧]
-[チャット] --「目標化」--> [目標作成モーダル] --保存--> [目標一覧]
-[チャット] --「キャプチャ」--> [キャプチャ] --実行--> [タイムライン]
-[ホーム] --「今日のタスクを全表示」--> [タスク一覧]
-[タスク一覧] --行選択--> [タスク詳細]
-[タスク詳細] --「ブロック化」--> [タイムライン]
-[ホーム] / [任意] --「最近のキャプチャ」--> [キャプチャ]
-[設定] --権限許可--> [キャプチャ]
+```mermaid
+flowchart TD
+  ホーム[ホーム]
+  チャット[チャット]
+  タスク詳細新規[タスク詳細<br/>新規]
+  タスク一覧[タスク一覧]
+  タスク詳細[タスク詳細]
+  目標作成モーダル[目標作成<br/>モーダル]
+  目標一覧[目標一覧]
+  キャプチャ[キャプチャ]
+  タイムライン[タイムライン]
+  設定[設定]
+
+  ホーム -->|相談する| チャット
+  チャット -->|タスク化| タスク詳細新規
+  タスク詳細新規 -->|保存| タスク一覧
+  チャット -->|目標化| 目標作成モーダル
+  目標作成モーダル -->|保存| 目標一覧
+  チャット -->|キャプチャ| キャプチャ
+  キャプチャ -->|実行| タイムライン
+  ホーム -->|今日のタスクを全表示| タスク一覧
+  タスク一覧 -->|行選択| タスク詳細
+  タスク詳細 -->|ブロック化| タイムライン
+  ホーム -->|最近のキャプチャ| キャプチャ
+  設定 -->|権限許可| キャプチャ
 ```
 
 ---
@@ -212,8 +227,8 @@ erDiagram
     int estimateMin
     int priority
     string status
-    string tags // JSON
-    string attachments // JSON ids
+    string tags
+    string attachments
     datetime createdAt
     datetime updatedAt
   }
@@ -223,7 +238,7 @@ erDiagram
     string thumbPath
     datetime capturedAt
     string mode
-    string meta // JSON
+    string meta
     string linkedTaskId FK
     string linkedGoalId FK
   }
@@ -232,8 +247,8 @@ erDiagram
     bool active
     int intervalMin
     int jitterSec
-    string excludeApps // JSON
-    string quietHours // JSON {start,end}
+    string excludeApps
+    string quietHours
     int retention_maxItems
     int retention_maxDays
     datetime updatedAt
@@ -330,10 +345,18 @@ erDiagram
 
 **権限取得フロー**
 
-```
-[キャプチャ] --未許可--> [権限説明モーダル] --「許可」--> [OS ダイアログ]
-  --許可--> 再試行
-  --拒否--> エラー表示＋設定遷移案内
+```mermaid
+flowchart LR
+  A[キャプチャ]
+  B[権限説明モーダル]
+  C[OS ダイアログ]
+  D[再試行]
+  E[エラー表示＋<br/>設定遷移案内]
+
+  A -->|未許可| B
+  B -->|許可ボタン| C
+  C -->|許可| D
+  C -->|拒否| E
 ```
 
 ---
@@ -342,27 +365,43 @@ erDiagram
 
 ### 12.1 タスク状態
 
-```
-TODO -> (開始) -> DOING -> (一時停止) -> PAUSED -> (再開) -> DOING -> (完了) -> DONE
-TODO -> (完了) -> DONE
-DOING -> (完了) -> DONE
-任意 -> (アーカイブ) -> ARCHIVED
+```mermaid
+stateDiagram-v2
+  [*] --> TODO
+  TODO --> DOING: 開始
+  TODO --> DONE: 完了
+  DOING --> PAUSED: 一時停止
+  DOING --> DONE: 完了
+  PAUSED --> DOING: 再開
+  DOING --> ARCHIVED: アーカイブ
+  TODO --> ARCHIVED: アーカイブ
+  PAUSED --> ARCHIVED: アーカイブ
+  DONE --> ARCHIVED: アーカイブ
 ```
 
 ### 12.2 キャプチャ要求
 
-```
-REQUESTED -> (許可済み) -> GRANTED -> (実行) -> COMPLETED
-REQUESTED -> (拒否) -> DENIED
-GRANTED -> (失敗) -> FAILED
+```mermaid
+stateDiagram-v2
+  [*] --> REQUESTED
+  REQUESTED --> GRANTED: 許可済み
+  REQUESTED --> DENIED: 拒否
+  GRANTED --> COMPLETED: 実行
+  GRANTED --> FAILED: 失敗
+  COMPLETED --> [*]
+  DENIED --> [*]
+  FAILED --> [*]
 ```
 
 ### 12.3 定期キャプチャ（スケジュール）
 
-```
-INACTIVE -> (start) -> ACTIVE -> (stop) -> INACTIVE
-ACTIVE -> (エラー上限到達) -> PAUSED
-PAUSED -> (再開) -> ACTIVE
+```mermaid
+stateDiagram-v2
+  [*] --> INACTIVE
+  INACTIVE --> ACTIVE: start
+  ACTIVE --> INACTIVE: stop
+  ACTIVE --> PAUSED: エラー上限到達
+  PAUSED --> ACTIVE: 再開
 ```
 
 ---
