@@ -37,19 +37,13 @@
   * **iPad/iPhone**: **Swift**（ReplayKit / UIScreenCapture API）。
   * **Mac**: **Swift**（ScreenCaptureKit / AVFoundation）。
 
-````mermaid
+```mermaid
 flowchart LR
   WebView <--bridge--> Native
   WebView <--> LocalServer(Go)
   LocalServer <--> DB[(SQLite)]
   LocalServer <--> LLM
-```mermaid
-flowchart LR
-  WebView <--bridge--> Native
-  WebView <--> LocalServer
-  LocalServer <--> DB[(SQLite)]
-  LocalServer <--> LLM
-````
+```
 
 ---
 
@@ -161,11 +155,6 @@ flowchart LR
 ### 6.7 タイムライン（/timeline）
 
 * **表示**: 縦軸時間。タスクブロック、完了チェック時刻、キャプチャ時刻を統合表示。
-
-* **編集**: ドラッグでブロック長変更、右クリックでメニュー。
-
-* **表示**: 縦軸時間。タスクブロック、完了チェック時刻、キャプチャ時刻を統合表示。
-
 * **編集**: ドラッグでブロック長変更、右クリックでメニュー。
 
 ### 6.8 設定（/settings/local）
@@ -347,50 +336,37 @@ erDiagram
   --拒否--> エラー表示＋設定遷移案内
 ```
 
-[キャプチャ] --未許可--> [権限説明モーダル] --「許可」--> [OS ダイアログ]
---許可--> 再試行
---拒否--> エラー表示＋設定遷移案内
-
-```
-
 ---
-## 12. 状態機械
-### 12.1 タスク状態
-```
 
+## 12. 状態機械
+
+### 12.1 タスク状態
+
+```
 TODO -> (開始) -> DOING -> (一時停止) -> PAUSED -> (再開) -> DOING -> (完了) -> DONE
 TODO -> (完了) -> DONE
 DOING -> (完了) -> DONE
 任意 -> (アーカイブ) -> ARCHIVED
-
 ```
 
 ### 12.2 キャプチャ要求
-```
 
+```
 REQUESTED -> (許可済み) -> GRANTED -> (実行) -> COMPLETED
 REQUESTED -> (拒否) -> DENIED
 GRANTED -> (失敗) -> FAILED
-
 ```
 
 ### 12.3 定期キャプチャ（スケジュール）
-```
 
+```
 INACTIVE -> (start) -> ACTIVE -> (stop) -> INACTIVE
 ACTIVE -> (エラー上限到達) -> PAUSED
 PAUSED -> (再開) -> ACTIVE
-
 ```
-```
-
-REQUESTED -> (許可済み) -> GRANTED -> (実行) -> COMPLETED
-REQUESTED -> (拒否) -> DENIED
-GRANTED -> (失敗) -> FAILED
-
-````
 
 ---
+
 ## 13. ルーティング/URL 設計（WebView 内 SPA）
 - `/` ホーム
 - `/chat`
@@ -405,14 +381,16 @@ GRANTED -> (失敗) -> FAILED
 - `mytime://task/<id>`
 
 ---
+
 ## 14. WebView-ネイティブブリッジ I/F
+
 ```ts
 interface Bridge {
   captureScreenshot(params?: { mode?: 'full'|'window'|'region'; region?: {x:number;y:number;width:number;height:number} }): Promise<{ path: string; thumbPath?: string }>
   requestPermission(kind: 'capture'): Promise<'granted'|'denied'>
   getAppInfo(): Promise<{ platform: 'ios'|'android'|'mac'|'win'|'linux'; version: string }>
 }
-````
+```
 
 ---
 
