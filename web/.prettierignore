@@ -1,0 +1,24 @@
+# Biome管轄ファイル（重複を避ける）
+**/*.ts
+**/*.tsx
+**/*.json
+**/*.html
+**/*.css
+
+# ビルド成果物
+node_modules
+dist
+build
+.next
+coverage
+.cache
+*.min.js
+*.min.css
+
+# Nix
+result
+result-*
+
+# その他
+.DS_Store
+
