@@ -60,9 +60,6 @@ erDiagram
     string id PK
     bool active
     int intervalMin
-    int jitterSec
-    string excludeApps
-    string quietHours
     int retention_maxItems
     int retention_maxDays
     datetime updatedAt
@@ -125,17 +122,14 @@ erDiagram
 
 ### CAPTURE_SCHEDULE（キャプチャスケジュール）
 
-| カラム名           | 型       | 説明                                      |
-| ------------------ | -------- | ----------------------------------------- |
-| id                 | string   | 主キー（UUID）                            |
-| active             | bool     | 有効/無効                                 |
-| intervalMin        | int      | 実行間隔（分）                            |
-| jitterSec          | int      | ジッター（秒）                            |
-| excludeApps        | string   | 除外アプリリスト（JSON配列文字列）        |
-| quietHours         | string   | 静止時間帯（JSON文字列）                  |
-| retention_maxItems | int      | 保存上限（件数）                          |
-| retention_maxDays  | int      | 保存上限（日数）                          |
-| updatedAt          | datetime | 更新日時                                  |
+| カラム名           | 型       | 説明             |
+| ------------------ | -------- | ---------------- |
+| id                 | string   | 主キー（UUID）   |
+| active             | bool     | 有効/無効        |
+| intervalMin        | int      | 実行間隔（分）   |
+| retention_maxItems | int      | 保存上限（件数） |
+| retention_maxDays  | int      | 保存上限（日数） |
+| updatedAt          | datetime | 更新日時         |
 
 ### CHAT_MESSAGE（チャット履歴）
 
@@ -195,9 +189,6 @@ interface CaptureSchedule {
   id: string;
   active: boolean;
   intervalMin: number;
-  jitterSec: number;
-  excludeApps: string[]; // stored as JSON
-  quietHours: string; // stored as JSON
   retention_maxItems: number;
   retention_maxDays: number;
   updatedAt: string;

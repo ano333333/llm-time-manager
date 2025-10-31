@@ -290,9 +290,6 @@ data: [DONE]
     "id": "schedule-1",
     "active": true,
     "intervalMin": 5,
-    "jitterSec": 30,
-    "excludeApps": ["Slack"],
-    "quietHours": "22:00-08:00",
     "retention_maxItems": 1000,
     "retention_maxDays": 30,
     "updatedAt": "2025-10-29T10:00:00Z"
@@ -310,9 +307,6 @@ data: [DONE]
 {
   "active": true,
   "intervalMin": 5,
-  "jitterSec": 30,
-  "excludeApps": ["Slack"],
-  "quietHours": "22:00-08:00",
   "retention_maxItems": 1000,
   "retention_maxDays": 30
 }
