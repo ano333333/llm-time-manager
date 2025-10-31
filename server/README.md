@@ -8,8 +8,23 @@ LLM時間管理ツールのバックエンドサーバーです。Go言語で実
 
 - [Nix](https://nixos.org/download.html) がインストールされていること
 - Flakesが有効化されていること
+- （推奨）[direnv](https://direnv.net/) がインストールされていること
 
 ### 開発環境に入る
+
+#### direnvを使用する場合（推奨）
+
+direnvを使用すると、ディレクトリに入るだけで自動的にNix環境がロードされます：
+
+```bash
+cd server
+direnv allow  # 初回のみ
+# 以降、serverディレクトリに入ると自動的にNix環境がロード
+```
+
+VSCodeを使用する場合、[direnv拡張機能](https://marketplace.visualstudio.com/items?itemName=mkhl.direnv)をインストールすることで、エディタ内でもNix環境が自動的にロードされます。
+
+#### 手動でdevshellに入る場合
 
 ```bash
 cd server
