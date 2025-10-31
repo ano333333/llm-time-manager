@@ -38,8 +38,8 @@
   export GOPATH="''${GOPATH:-$HOME/go}"
   export PATH="$GOPATH/bin:$PATH"
   
-  # pnpm設定
-  export PNPM_HOME="$HOME/.local/share/pnpm"
+  # pnpm設定（既存の設定がある場合はそれを尊重）
+  export PNPM_HOME="''${PNPM_HOME:-$HOME/.local/share/pnpm}"
   export PATH="$PNPM_HOME:$PATH"
 ''
 
