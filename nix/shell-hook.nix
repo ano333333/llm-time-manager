@@ -33,13 +33,12 @@
   echo ""
   echo "サポートプラットフォーム: Linux (x86_64/aarch64), macOS (x86_64/aarch64)"
   echo ""
-  
+
   # GOPATHの設定（既存の設定がある場合はそれを尊重）
   export GOPATH="''${GOPATH:-$HOME/go}"
   export PATH="$GOPATH/bin:$PATH"
-  
+
   # pnpm設定（既存の設定がある場合はそれを尊重）
   export PNPM_HOME="''${PNPM_HOME:-$HOME/.local/share/pnpm}"
   export PATH="$PNPM_HOME:$PATH"
 ''
-
