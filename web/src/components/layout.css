@@ -9,6 +9,7 @@
 .layout-body {
   display: flex;
   flex: 1;
+  /* ネストされたスクロールエリアでのスクロールバー表示を防ぐ */
   overflow: hidden;
 }
 
