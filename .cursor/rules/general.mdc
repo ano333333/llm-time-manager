@@ -33,13 +33,22 @@ commitには以下のprefixのいずれかをつけること。
 - test: テストの新規追加または修正
 - chore: コマンド実行やツール実行の結果生じた変更
 
+また特定のデバイスに対する変更の場合、どれに対するcommitかをprefixに続けて書くこと。`feat(web)`、`fix(windows)`など。コンポーネントは以下の中から選ぶ。
+
+- web
+- server
+- windows
+- ubuntu
+- mac
+- ios
+
 **上記のprefixのいずれか1つに収まる分量**をcommmitすること。複数のprefixにまたがる変更は分割してcommitする。
 
-例: 新しい機能をTDDで実装しドキュメントを修正した場合、
+例: webの新しい機能をTDDで実装し全体ドキュメントを修正した場合、
 
-- テスト追加のtest commit
-- 新機能の本実装を行うfeat commit
-- 新機能に関するドキュメント修正のdocs commit
+- テスト追加のcommit: test(web)
+- 新機能の本実装を行うcommit: feat(web)
+- 新機能に関するドキュメント修正のcommit: docs
 
 に分ける。
 
