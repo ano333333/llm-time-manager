@@ -1,3 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  /* カスタムカラー設定 - ダークモードをデフォルトに */
+  --color-bg-primary-dark: #242424;
+  --color-bg-secondary-dark: #1a1a1a;
+  --color-bg-tertiary-dark: #2a2a2a;
+  --color-bg-primary-light: #ffffff;
+  --color-bg-secondary-light: #f9f9f9;
+  --color-bg-tertiary-light: #ffffff;
+  
+  --color-accent: #646cff;
+  --color-accent-hover-dark: #535bf2;
+  --color-accent-hover-light: #747bff;
+
+  /* カスタムスペーシング */
+  --spacing-bottom-nav: 5rem;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -12,7 +31,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* 背景色 */
+  /* 背景色 - ダークモード */
   --bg-primary: #242424;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #2a2a2a;
@@ -26,54 +45,6 @@
 
   /* ボトムナビゲーション高さ */
   --bottom-nav-height: 5rem;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
-
-a {
-  font-weight: 500;
-  color: var(--accent-color);
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: var(--accent-color-hover);
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: var(--accent-color);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
@@ -92,8 +63,48 @@ button:focus-visible {
     /* ライトモード用アクセントカラー */
     --accent-color-hover: #747bff;
   }
+}
+
+/* Tailwindのbaseレイヤーをカスタマイズ */
+@layer base {
+  * {
+    @apply m-0 p-0 box-border;
+  }
+
+  body {
+    @apply m-0 min-w-[320px] min-h-screen;
+  }
+
+  #root {
+    @apply w-full min-h-screen;
+  }
+
+  a {
+    @apply font-medium text-[var(--accent-color)] no-underline;
+  }
+
+  a:hover {
+    @apply text-[var(--accent-color-hover)];
+  }
 
   button {
-    background-color: #f9f9f9;
+    @apply rounded-lg border border-transparent px-5 py-2.5 text-base font-medium 
+           bg-[#1a1a1a] cursor-pointer transition-[border-color] duration-[250ms];
+    font-family: inherit;
+  }
+
+  button:hover {
+    @apply border-[var(--accent-color)];
+  }
+
+  button:focus,
+  button:focus-visible {
+    @apply outline outline-4 outline-[-webkit-focus-ring-color];
+  }
+
+  @media (prefers-color-scheme: light) {
+    button {
+      @apply bg-[#f9f9f9];
+    }
   }
 }
