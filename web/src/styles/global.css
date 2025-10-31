@@ -11,6 +11,21 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* 背景色 */
+  --bg-primary: #242424;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+
+  /* ボーダー色 */
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  /* アクセントカラー */
+  --accent-color: #646cff;
+  --accent-color-hover: #535bf2;
+
+  /* ボトムナビゲーション高さ */
+  --bottom-nav-height: 5rem;
 }
 
 * {
@@ -65,6 +80,14 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+
+    /* ライトモード用背景色 */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9f9f9;
+    --bg-tertiary: #ffffff;
+
+    /* ライトモード用ボーダー色 */
+    --border-color: rgba(0, 0, 0, 0.1);
 
     /* ライトモード用アクセントカラー */
     --accent-color-hover: #747bff;
