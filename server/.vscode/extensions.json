@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "golang.go",
+    "ms-vscode.makefile-tools",
+    "editorconfig.editorconfig",
+    "mkhl.direnv"
+  ]
+}
+

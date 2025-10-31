@@ -1,0 +1,49 @@
+version: 2
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    # デフォルトで有効なリンター
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # 追加で有効化
+    - misspell
+    - unconvert
+    - unparam
+    - gosec
+    - gocyclo
+    - dupl
+    - goconst
+
+formatters:
+  enable:
+    - gofumpt
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  misspell:
+    locale: US
+  gofumpt:
+    extra-rules: true
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    # テストファイルでのエラーチェック省略を許可
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
