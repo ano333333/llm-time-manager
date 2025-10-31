@@ -45,7 +45,7 @@ devshellに入ると、以下のツールが利用可能になります：
 
 ## プロジェクト構造
 
-```
+```text
 server/
 ├── cmd/
 │   └── api/              # メインエントリーポイント
@@ -310,7 +310,7 @@ CGO_ENABLED=1 go build -o bin/api ./cmd/api
 
 ### SQLiteエラー
 
-```
+```text
 database is locked
 ```
 
@@ -318,7 +318,7 @@ database is locked
 
 ### ポート競合
 
-```
+```text
 bind: address already in use
 ```
 
@@ -326,7 +326,7 @@ bind: address already in use
 
 ### LLM接続エラー
 
-```
+```text
 dial tcp: connection refused
 ```
 
