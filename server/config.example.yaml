@@ -1,0 +1,53 @@
+# サーバー設定のサンプル
+# 本番環境用の設定は config.local.yaml にコピーして編集してください
+
+server:
+  host: "localhost"
+  port: 8080
+  read_timeout: 30s
+  write_timeout: 30s
+  shutdown_timeout: 10s
+
+database:
+  type: "sqlite"
+  path: "./data.db"
+  max_open_conns: 25
+  max_idle_conns: 5
+  conn_max_lifetime: 5m
+
+llm:
+  # LLMエンドポイント（ローカルまたはLAN上のLLMサービス）
+  endpoint: "http://localhost:11434/api/generate"
+  model: "llama2"
+  timeout: 120s
+  max_tokens: 2048
+
+capture:
+  # スクリーンショット保存先
+  storage_path: "~/.local/share/llm-time-manager/screenshots/"
+  # 定期キャプチャの間隔（分）
+  interval_minutes: 15
+  # サムネイルサイズ
+  thumbnail_width: 320
+  thumbnail_height: 240
+
+logging:
+  level: "info" # debug, info, warn, error
+  format: "json" # json, text
+  output: "stdout" # stdout, file
+  file_path: "./logs/server.log"
+
+cors:
+  allowed_origins:
+    - "http://localhost:5173"
+    - "http://localhost:3000"
+  allowed_methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed_headers:
+    - "Content-Type"
+    - "Authorization"
+
