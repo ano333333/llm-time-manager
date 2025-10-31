@@ -3,6 +3,7 @@ import Capture from "./routes/capture";
 import Chat from "./routes/chat";
 import Goals from "./routes/goals";
 import Home from "./routes/index";
+import NotFound from "./routes/not-found";
 import Settings from "./routes/settings";
 import Tasks from "./routes/tasks";
 
@@ -15,6 +16,7 @@ function App() {
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/capture" element={<Capture />} />
       <Route path="/settings/local" element={<Settings />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
