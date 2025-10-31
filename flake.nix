@@ -53,6 +53,10 @@
             biome
             nodePackages.prettier
             
+            # Nix開発環境
+            nil             # Nix language server
+            nixpkgs-fmt     # Nixフォーマッター
+            
             # その他便利ツール
             jq              # JSONパーサー
             curl            # API テスト
@@ -78,6 +82,10 @@
             echo "  - sqlite: $(sqlite3 --version | cut -d' ' -f1)"
             echo "  - sqlc: SQLからGoコード生成"
             echo "  - goose: DBマイグレーション"
+            echo ""
+            echo "Nix環境:"
+            echo "  - nil: Nix language server"
+            echo "  - nixpkgs-fmt: Nixフォーマッター"
             echo ""
             echo "バージョン管理:"
             echo "  - git: $(git --version | head -n 1)"
