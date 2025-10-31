@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    // Go開発
+    "golang.go",
+    
+    // TypeScript/React開発
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "biomejs.biome",
+    
+    // Nix開発
+    "jnoortheen.nix-ide",
+    "arrterian.nix-env-selector",
+    
+    // その他便利な拡張機能
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}
+
