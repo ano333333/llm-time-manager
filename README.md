@@ -98,6 +98,40 @@ repo/
   README.md
 ```
 
+## 開発環境
+
+### 前提条件
+
+- [Nix](https://nixos.org/download.html) がインストールされていること
+- Flakes が有効化されていること
+
+### セットアップ
+
+プロジェクトルートで以下を実行：
+
+```bash
+# Nix devshellに入る
+nix develop
+
+# または direnv を使用（推奨）
+direnv allow
+```
+
+統合されたdevshellには以下が含まれます：
+
+- **Go開発環境**: Go、gopls、golangci-lint、gofumpt、air、delve等（server用）
+- **Node.js環境**: Node.js 22、pnpm、biome、prettier（web用）
+- **データベースツール**: SQLite、sqlc、goose
+- **バージョン管理**: git、gh
+- **その他**: jq、curl
+
+### サポートプラットフォーム
+
+開発環境は以下のプラットフォームでサポートされます：
+
+- Linux (x86_64, aarch64)
+- macOS (x86_64, aarch64)
+
 ## 開発・配布
 
 - **server**: 単体バイナリ（Go）
