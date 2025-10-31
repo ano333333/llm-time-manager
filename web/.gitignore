@@ -16,6 +16,7 @@ pnpm-debug.log*
 dist/
 build/
 *.log
+.vite/
 
 # IDE
 .vscode/

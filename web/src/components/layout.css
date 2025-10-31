@@ -1,0 +1,40 @@
+/* レイアウト全体のスタイル */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  /* ネストされたスクロールエリアでのスクロールバー表示を防ぐ */
+  overflow: hidden;
+}
+
+.layout-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background-color: var(--bg-primary, #242424);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .layout-body {
+    flex-direction: column;
+  }
+
+  .layout-content {
+    padding: 1rem;
+    padding-bottom: var(--bottom-nav-height); /* ボトムナビゲーションの高さ分を確保 */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .layout-content {
+    background-color: var(--bg-primary, #ffffff);
+  }
+}
+
