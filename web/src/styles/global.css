@@ -65,10 +65,9 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
 
-  a:hover {
-    color: #747bff;
+    /* ライトモード用アクセントカラー */
+    --accent-color-hover: #747bff;
   }
 
   button {
