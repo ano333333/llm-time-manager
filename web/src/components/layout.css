@@ -28,7 +28,7 @@
 
   .layout-content {
     padding: 1rem;
-    padding-bottom: 5rem; /* ボトムナビゲーションの高さ分を確保 */
+    padding-bottom: var(--bottom-nav-height); /* ボトムナビゲーションの高さ分を確保 */
   }
 }
 
