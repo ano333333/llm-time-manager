@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS screenshots (
     meta TEXT NOT NULL DEFAULT '{}',
     linked_task_id TEXT,
     linked_goal_id TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (linked_task_id) REFERENCES tasks(id) ON DELETE SET NULL,
     FOREIGN KEY (linked_goal_id) REFERENCES goals(id) ON DELETE SET NULL
 );
@@ -17,6 +19,16 @@ CREATE TABLE IF NOT EXISTS screenshots (
 CREATE INDEX IF NOT EXISTS idx_screenshots_captured_at ON screenshots(captured_at);
 CREATE INDEX IF NOT EXISTS idx_screenshots_linked_task_id ON screenshots(linked_task_id);
 CREATE INDEX IF NOT EXISTS idx_screenshots_mode ON screenshots(mode);
+
+-- updated_atの自動更新トリガー
+-- +goose StatementBegin
+CREATE TRIGGER IF NOT EXISTS update_screenshots_updated_at
+    AFTER UPDATE ON screenshots
+    FOR EACH ROW
+BEGIN
+    UPDATE screenshots SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+END;
+-- +goose StatementEnd
 
 -- +goose Down
 -- インデックスの削除

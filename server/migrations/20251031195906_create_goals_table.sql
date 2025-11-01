@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS goals (
     kpi_target FLOAT,
     kpi_unit TEXT,
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'done')),
-    createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);

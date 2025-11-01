@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS capture_schedules (
     interval_min INTEGER NOT NULL DEFAULT 10,
     retention_max_items INTEGER NOT NULL DEFAULT 100,
     retention_max_days INTEGER NOT NULL DEFAULT 30,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
