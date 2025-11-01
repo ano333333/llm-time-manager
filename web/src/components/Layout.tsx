@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Header from "./Header";
 import Navigation from "./Navigation";
 import "./layout.css";
@@ -22,4 +22,3 @@ export default function Layout({ children }: LayoutProps) {
     </div>
   );
 }
-
