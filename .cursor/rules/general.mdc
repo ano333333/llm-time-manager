@@ -109,9 +109,9 @@ issue に対する実装が終わったら PR を作成すること。
 
 - `web`: フロントエンド (React) - commit prefix: `(web)`
 - `server`: バックエンド (Go) - commit prefix: `(server)`
-- `linux`: Linux クライアント (Rust) - commit prefix: `(ubuntu)`
+- `ubuntu`: Ubuntu クライアント (Rust) - commit prefix: `(ubuntu)`
 - `windows`: Windows クライアント (C++) - commit prefix: `(windows)`
-- `macos`: macOS クライアント (Swift) - commit prefix: `(mac)`
+- `mac`: macOS クライアント (Swift) - commit prefix: `(mac)`
 - `ios`: iOS/iPadOS クライアント (Swift) - commit prefix: `(ios)`
 
 ### タグ付与ルール
