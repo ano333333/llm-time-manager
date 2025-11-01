@@ -1,0 +1,47 @@
+-- +goose Up
+-- tasksテーブルの作成
+CREATE TABLE IF NOT EXISTS tasks (
+    id TEXT PRIMARY KEY,
+    goal_id TEXT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    due DATE,
+    estimate_min INTEGER NOT NULL DEFAULT 0,
+    priority INTEGER NOT NULL DEFAULT 3 CHECK (priority >= 1 AND priority <= 5),
+    status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'doing', 'paused', 'done', 'archived')),
+    tags TEXT NOT NULL DEFAULT '[]',
+    attachments TEXT NOT NULL DEFAULT '[]',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE SET NULL
+);
+
+-- インデックスの作成
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+CREATE INDEX IF NOT EXISTS idx_tasks_due ON tasks(due);
+CREATE INDEX IF NOT EXISTS idx_tasks_goal_id ON tasks(goal_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at);
+
+-- updated_atの自動更新トリガー
+-- +goose StatementBegin
+CREATE TRIGGER IF NOT EXISTS update_tasks_updated_at
+    BEFORE UPDATE ON tasks
+    FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+    UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;
+-- +goose StatementEnd
+
+-- +goose Down
+-- トリガーの削除
+DROP TRIGGER IF EXISTS update_tasks_updated_at;
+
+-- インデックスの削除
+DROP INDEX IF EXISTS idx_tasks_created_at;
+DROP INDEX IF EXISTS idx_tasks_goal_id;
+DROP INDEX IF EXISTS idx_tasks_due;
+DROP INDEX IF EXISTS idx_tasks_status;
+
+-- テーブルの削除
+DROP TABLE IF EXISTS tasks;

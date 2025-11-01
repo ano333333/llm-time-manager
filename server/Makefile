@@ -1,4 +1,4 @@
-.PHONY: help build run test test-coverage lint fmt clean dev migrate-up migrate-down
+.PHONY: help build run test test-coverage lint fmt clean dev
 
 help: ## ヘルプを表示
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -28,15 +28,6 @@ fmt: ## コードをフォーマット
 
 clean: ## ビルド成果物を削除
 	rm -rf bin/ tmp/ coverage.out coverage.html
-
-migrate-up: ## データベースマイグレーションを実行
-	goose -dir migrations sqlite3 ./data.db up
-
-migrate-down: ## データベースマイグレーションをロールバック
-	goose -dir migrations sqlite3 ./data.db down
-
-migrate-status: ## マイグレーションステータスを表示
-	goose -dir migrations sqlite3 ./data.db status
 
 .DEFAULT_GOAL := help
 

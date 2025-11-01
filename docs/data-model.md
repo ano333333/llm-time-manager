@@ -14,7 +14,7 @@
 
 ```mermaid
 erDiagram
-  GOAL ||--o{ TASK : has
+  GOAL o|--o{ TASK : has
   TASK ||--o{ SCREENSHOT : attaches
   GOAL ||--o{ SCREENSHOT : relates
   CAPTURE_SCHEDULE ||--o{ SCREENSHOT : produces
@@ -60,9 +60,6 @@ erDiagram
     string id PK
     bool active
     int intervalMin
-    int jitterSec
-    string excludeApps
-    string quietHours
     int retention_maxItems
     int retention_maxDays
     datetime updatedAt
@@ -79,74 +76,71 @@ erDiagram
 
 ### GOAL（目標）
 
-| カラム名        | 型       | 説明                                      |
-| --------------- | -------- | ----------------------------------------- |
-| id              | string   | 主キー（UUID）                            |
-| title           | string   | 目標タイトル                              |
-| description     | string   | 詳細説明                                  |
-| startDate       | date     | 開始日                                    |
-| endDate         | date     | 終了日                                    |
-| kpi_name        | string   | KPI名称（例: "集中作業時間"）            |
-| kpi_target      | float    | KPI目標値                                 |
-| kpi_unit        | string   | KPI単位（例: "時間"）                     |
-| status          | string   | ステータス（active/paused/done）          |
-| createdAt       | datetime | 作成日時                                  |
-| updatedAt       | datetime | 更新日時                                  |
+| カラム名    | 型       | 説明                             |
+| ----------- | -------- | -------------------------------- |
+| id          | string   | 主キー（UUID）                   |
+| title       | string   | 目標タイトル                     |
+| description | string   | 詳細説明                         |
+| startDate   | date     | 開始日                           |
+| endDate     | date     | 終了日                           |
+| kpi_name    | string   | KPI 名称（例: "集中作業時間"）   |
+| kpi_target  | float    | KPI 目標値                       |
+| kpi_unit    | string   | KPI 単位（例: "時間"）           |
+| status      | string   | ステータス（active/paused/done） |
+| createdAt   | datetime | 作成日時                         |
+| updatedAt   | datetime | 更新日時                         |
 
 ### TASK（タスク）
 
-| カラム名        | 型       | 説明                                          |
-| --------------- | -------- | --------------------------------------------- |
-| id              | string   | 主キー（UUID）                                |
-| goalId          | string   | 関連目標ID（外部キー、NULL可）                |
-| title           | string   | タスクタイトル                                |
-| description     | string   | 詳細説明                                      |
-| due             | date     | 期日                                          |
-| estimateMin     | int      | 推定所要時間（分）                            |
-| priority        | int      | 優先度（1-5）                                 |
-| status          | string   | ステータス（todo/doing/paused/done/archived） |
-| tags            | string   | タグ（JSON配列文字列）                        |
-| attachments     | string   | 添付ファイル情報（JSON配列文字列）            |
-| createdAt       | datetime | 作成日時                                      |
-| updatedAt       | datetime | 更新日時                                      |
+| カラム名    | 型       | 説明                                          |
+| ----------- | -------- | --------------------------------------------- |
+| id          | string   | 主キー（UUID）                                |
+| goalId      | string   | 関連目標 ID（外部キー、NULL 可）              |
+| title       | string   | タスクタイトル                                |
+| description | string   | 詳細説明                                      |
+| due         | date     | 期日                                          |
+| estimateMin | int      | 推定所要時間（分）                            |
+| priority    | int      | 優先度（1-5）                                 |
+| status      | string   | ステータス（todo/doing/paused/done/archived） |
+| tags        | string   | タグ（JSON 配列文字列）                       |
+| attachments | string   | 添付ファイル情報（JSON 配列文字列）           |
+| createdAt   | datetime | 作成日時                                      |
+| updatedAt   | datetime | 更新日時                                      |
 
 ### SCREENSHOT（スクリーンショット）
 
-| カラム名        | 型       | 説明                                  |
-| --------------- | -------- | ------------------------------------- |
-| id              | string   | 主キー（UUID）                        |
-| path            | string   | ファイルパス                          |
-| thumbPath       | string   | サムネイルパス                        |
-| capturedAt      | datetime | 撮影日時                              |
-| mode            | string   | モード（manual/scheduled）            |
-| meta            | string   | メタデータ（JSON文字列）              |
-| linkedTaskId    | string   | 関連タスクID（外部キー、NULL可）      |
-| linkedGoalId    | string   | 関連目標ID（外部キー、NULL可）        |
+| カラム名     | 型       | 説明                               |
+| ------------ | -------- | ---------------------------------- |
+| id           | string   | 主キー（UUID）                     |
+| path         | string   | ファイルパス                       |
+| thumbPath    | string   | サムネイルパス                     |
+| capturedAt   | datetime | 撮影日時                           |
+| mode         | string   | モード（manual/scheduled）         |
+| meta         | string   | メタデータ（JSON 文字列）          |
+| linkedTaskId | string   | 関連タスク ID（外部キー、NULL 可） |
+| linkedGoalId | string   | 関連目標 ID（外部キー、NULL 可）   |
 
 ### CAPTURE_SCHEDULE（キャプチャスケジュール）
 
-| カラム名           | 型       | 説明                                      |
-| ------------------ | -------- | ----------------------------------------- |
-| id                 | string   | 主キー（UUID）                            |
-| active             | bool     | 有効/無効                                 |
-| intervalMin        | int      | 実行間隔（分）                            |
-| jitterSec          | int      | ジッター（秒）                            |
-| excludeApps        | string   | 除外アプリリスト（JSON配列文字列）        |
-| quietHours         | string   | 静止時間帯（JSON文字列）                  |
-| retention_maxItems | int      | 保存上限（件数）                          |
-| retention_maxDays  | int      | 保存上限（日数）                          |
-| updatedAt          | datetime | 更新日時                                  |
+| カラム名           | 型       | 説明             |
+| ------------------ | -------- | ---------------- |
+| id                 | string   | 主キー（UUID）   |
+| active             | bool     | 有効/無効        |
+| intervalMin        | int      | 実行間隔（分）   |
+| retention_maxItems | int      | 保存上限（件数） |
+| retention_maxDays  | int      | 保存上限（日数） |
+| updatedAt          | datetime | 更新日時         |
 
 ### CHAT_MESSAGE（チャット履歴）
 
-| カラム名   | 型       | 説明                            |
-| ---------- | -------- | ------------------------------- |
-| id         | string   | 主キー（UUID）                  |
-| role       | string   | ロール（user/assistant/system） |
-| content    | string   | メッセージ内容                  |
-| createdAt  | datetime | 作成日時                        |
+| カラム名  | 型       | 説明                            |
+| --------- | -------- | ------------------------------- |
+| id        | string   | 主キー（UUID）                  |
+| role      | string   | ロール（user/assistant/system） |
+| content   | string   | メッセージ内容                  |
+| createdAt | datetime | 作成日時                        |
 
-## 型定義（TypeScript例）
+## 型定義（TypeScript 例）
 
 ```ts
 // 主要テーブル: goals, tasks, screenshots(内部), capture_schedules, chat_messages
@@ -160,7 +154,7 @@ interface Goal {
   kpi_name: string;
   kpi_target: number;
   kpi_unit: string;
-  status: 'active' | 'paused' | 'done';
+  status: "active" | "paused" | "done";
   createdAt: string; // ISO datetime
   updatedAt: string;
 }
@@ -173,7 +167,7 @@ interface Task {
   due: string; // ISO date
   estimateMin: number;
   priority: number; // 1-5
-  status: 'todo' | 'doing' | 'paused' | 'done' | 'archived';
+  status: "todo" | "doing" | "paused" | "done" | "archived";
   tags: string[]; // stored as JSON
   attachments: string[]; // stored as JSON
   createdAt: string;
@@ -185,7 +179,7 @@ interface Screenshot {
   path: string;
   thumbPath?: string;
   capturedAt: string;
-  mode: 'manual' | 'scheduled';
+  mode: "manual" | "scheduled";
   meta: Record<string, any>; // stored as JSON
   linkedTaskId?: string;
   linkedGoalId?: string;
@@ -195,9 +189,6 @@ interface CaptureSchedule {
   id: string;
   active: boolean;
   intervalMin: number;
-  jitterSec: number;
-  excludeApps: string[]; // stored as JSON
-  quietHours: string; // stored as JSON
   retention_maxItems: number;
   retention_maxDays: number;
   updatedAt: string;
@@ -205,7 +196,7 @@ interface CaptureSchedule {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   createdAt: string;
 }
@@ -226,4 +217,3 @@ interface ChatMessage {
 - Go の migration ツール（golang-migrate 等）を使用
 - バージョン管理された SQL ファイル（up/down）
 - アプリ起動時に自動実行
-

@@ -1,22 +1,20 @@
-# API仕様
+# API 仕様
 
 ローカルサーバ（Go）が提供する REST + WebSocket API。
 
-ベースURL: `http://localhost:<port>`
+ベース URL: `http://localhost:<port>`
 
 ## LLM
 
 ### POST /llm/chat
 
-LLMとのチャット（Server-Sent Events または WebSocket でストリーム応答）。
+LLM とのチャット（Server-Sent Events または WebSocket でストリーム応答）。
 
 **リクエスト**
 
 ```json
 {
-  "messages": [
-    { "role": "user", "content": "来週水曜にレポートを提出したい" }
-  ]
+  "messages": [{ "role": "user", "content": "来週水曜にレポートを提出したい" }]
 }
 ```
 
@@ -43,7 +41,7 @@ data: [DONE]
 
 - `status` (optional): フィルタ（`todo|doing|paused|done`）
 - `due` (optional): 期日フィルタ（`today|week|overdue`）
-- `goalId` (optional): 目標IDでフィルタ
+- `goalId` (optional): 目標 ID でフィルタ
 
 **レスポンス**
 
@@ -246,7 +244,7 @@ data: [DONE]
 
 - `limit` (optional): 取得件数（デフォルト: 50）
 - `offset` (optional): オフセット
-- `taskId` (optional): タスクIDでフィルタ
+- `taskId` (optional): タスク ID でフィルタ
 
 **レスポンス**
 
@@ -290,9 +288,6 @@ data: [DONE]
     "id": "schedule-1",
     "active": true,
     "intervalMin": 5,
-    "jitterSec": 30,
-    "excludeApps": ["Slack"],
-    "quietHours": "22:00-08:00",
     "retention_maxItems": 1000,
     "retention_maxDays": 30,
     "updatedAt": "2025-10-29T10:00:00Z"
@@ -310,9 +305,6 @@ data: [DONE]
 {
   "active": true,
   "intervalMin": 5,
-  "jitterSec": 30,
-  "excludeApps": ["Slack"],
-  "quietHours": "22:00-08:00",
   "retention_maxItems": 1000,
   "retention_maxDays": 30
 }
@@ -425,4 +417,3 @@ data: [DONE]
 ## レート制限
 
 プロトタイプのため、レート制限は実装しない。
-

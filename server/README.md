@@ -1,20 +1,21 @@
-# LLM時間管理ツール - Goサーバー
+# LLM 時間管理ツール - Go サーバー
 
-LLM時間管理ツールのバックエンドサーバーです。Go言語で実装されており、REST API、WebSocket、SQLiteデータベースを使用しています。
+LLM 時間管理ツールのバックエンドサーバーです。Go 言語で実装されており、REST API、WebSocket、SQLite
+データベースを使用しています。
 
 ## 開発環境のセットアップ
 
 ### 前提条件
 
 - [Nix](https://nixos.org/download.html) がインストールされていること
-- Flakesが有効化されていること
+- Flakes が有効化されていること
 - （推奨）[direnv](https://direnv.net/) がインストールされていること
 
 ### 開発環境に入る
 
-#### direnvを使用する場合（推奨）
+#### direnv を使用する場合（推奨）
 
-direnvを使用すると、ディレクトリに入るだけで自動的にNix環境がロードされます：
+direnv を使用すると、ディレクトリに入るだけで自動的に Nix 環境がロードされます：
 
 ```bash
 cd server
@@ -22,26 +23,28 @@ direnv allow  # 初回のみ
 # 以降、serverディレクトリに入ると自動的にNix環境がロード
 ```
 
-VSCodeを使用する場合、[direnv拡張機能](https://marketplace.visualstudio.com/items?itemName=mkhl.direnv)をインストールすることで、エディタ内でもNix環境が自動的にロードされます。
+VSCode を使用する場合
+、[direnv 拡張機能](https://marketplace.visualstudio.com/items?itemName=mkhl.direnv)をインストールす
+ることで、エディタ内でも Nix 環境が自動的にロードされます。
 
-#### 手動でdevshellに入る場合
+#### 手動で devshell に入る場合
 
 ```bash
 cd server
 nix develop
 ```
 
-devshellに入ると、以下のツールが利用可能になります：
+devshell に入ると、以下のツールが利用可能になります：
 
-- **Go**: Go言語コンパイラ（v1.25+）
-- **gopls**: Go言語サーバー
+- **Go**: Go 言語コンパイラ（v1.25+）
+- **gopls**: Go 言語サーバー
 - **gofumpt**: コードフォーマッタ
 - **golangci-lint**: リンター
 - **air**: ホットリロード開発サーバー
-- **delve**: Goデバッガー
-- **sqlite**: SQLiteデータベース
-- **sqlc**: SQLからGoコード生成
-- **goose**: DBマイグレーションツール
+- **delve**: Go デバッガー
+- **sqlite**: SQLite データベース
+- **sqlc**: SQL から Go コード生成
+- **goose**: DB マイグレーションツール
 
 ## プロジェクト構造
 
@@ -141,40 +144,28 @@ cp config.example.yaml config.local.yaml
 主な設定項目：
 
 - **server**: ホスト、ポート、タイムアウト設定
-- **database**: SQLiteのパス、接続プール設定
-- **llm**: LLMエンドポイント、モデル設定
+- **database**: SQLite のパス、接続プール設定
+- **llm**: LLM エンドポイント、モデル設定
 - **capture**: スクリーンショット保存先、キャプチャ間隔
 - **logging**: ログレベル、出力先
 
 ## データベースマイグレーション
 
-### マイグレーションの実行
-
-```bash
-make migrate-up
-```
-
-### マイグレーションのロールバック
-
-```bash
-make migrate-down
-```
-
-### マイグレーションステータスの確認
-
-```bash
-make migrate-status
-```
+このプロジェクトでは [pressly/goose](https://github.com/pressly/goose) を使用してデータベースマイグ
+レーションを管理しています。
 
 ### 新しいマイグレーションの作成
 
 ```bash
+# goose CLI を使用（推奨）
 goose -dir migrations create <migration_name> sql
 ```
 
-## API仕様
+これにより、タイムスタンプ付きのマイグレーションファイルが自動生成されます。
 
-詳細なAPI仕様は [docs/api.md](../docs/api.md) を参照してください。
+## API 仕様
+
+詳細な API 仕様は [docs/api.md](../docs/api.md) を参照してください。
 
 ### 主なエンドポイント
 
@@ -187,8 +178,8 @@ goose -dir migrations create <migration_name> sql
 - `POST /api/goals` - 目標作成
 - `GET /api/captures` - キャプチャ一覧取得
 - `POST /api/captures` - 手動キャプチャ実行
-- `POST /api/llm/chat` - LLMチャット（SSEストリーム）
-- `WS /api/ws` - WebSocket接続
+- `POST /api/llm/chat` - LLM チャット（SSE ストリーム）
+- `WS /api/ws` - WebSocket 接続
 
 ## テスト
 
@@ -222,7 +213,7 @@ make test-coverage
 
 ## デバッグ
 
-### Delveを使用したデバッグ
+### Delve を使用したデバッグ
 
 ```bash
 dlv debug ./cmd/api
@@ -257,8 +248,8 @@ go test -bench=. -benchmem ./...
 ### フォーマット
 
 - `gofumpt` を使用してフォーマット（`make fmt`）
-- タブインデント（Go標準）
-- 1行あたり最大120文字を推奨
+- タブインデント（Go 標準）
+- 1 行あたり最大 120 文字を推奨
 
 ### 命名規則
 
@@ -282,7 +273,7 @@ if err != nil {
 ### ロギング
 
 - 構造化ログを使用（`zap` または `zerolog`）
-- PIIを含めない
+- PII を含めない
 - ログレベルを適切に設定
 
 ```go
@@ -308,7 +299,7 @@ CGO_ENABLED=1 go build -o bin/api ./cmd/api
 
 ## トラブルシューティング
 
-### SQLiteエラー
+### SQLite エラー
 
 ```text
 database is locked
@@ -324,21 +315,20 @@ bind: address already in use
 
 → `config.local.yaml` の `server.port` を変更してください
 
-### LLM接続エラー
+### LLM 接続エラー
 
 ```text
 dial tcp: connection refused
 ```
 
-→ LLMサーバーが起動しているか確認し、`llm.endpoint` の設定を確認してください
+→ LLM サーバーが起動しているか確認し、`llm.endpoint` の設定を確認してください
 
 ## 参考資料
 
-- [Go公式ドキュメント](https://go.dev/doc/)
+- [Go 公式ドキュメント](https://go.dev/doc/)
 - [Effective Go](https://go.dev/doc/effective_go)
 - [プロジェクト全体ドキュメント](../docs/)
 
 ## ライセンス
 
 MIT License - 詳細は [LICENSE](../LICENSE) を参照してください。
-
