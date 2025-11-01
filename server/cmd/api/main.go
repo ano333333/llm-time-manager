@@ -7,9 +7,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/ano333333/llm-time-manager/server/cmd/api/handlers"
-	"github.com/ano333333/llm-time-manager/server/cmd/api/repositories"
 	"github.com/ano333333/llm-time-manager/server/internal/database"
+	"github.com/ano333333/llm-time-manager/server/internal/handler"
+	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
 	"github.com/joho/godotenv"
 )
 
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// リポジトリ
-	captureScheduleRepository := repositories.DefaultCaptureScheduleRepository{DB: db}
+	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
 
 	// PORTの取得
 	err = godotenv.Load(".env")
@@ -72,6 +72,6 @@ func main() {
 		Handler: nil,
 	}
 
-	http.Handle("/capture/schedule", &handlers.CaptureScheduleHandler{CaptureScheduleRepository: &captureScheduleRepository})
+	http.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
 	server.ListenAndServe()
 }

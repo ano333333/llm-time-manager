@@ -1,14 +1,14 @@
-package handlers
+package handler
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/ano333333/llm-time-manager/server/cmd/api/repositories"
+	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
 )
 
 type CaptureScheduleHandler struct {
-	CaptureScheduleRepository repositories.CaptureScheduleRepository
+	CaptureScheduleStore repositories.CaptureScheduleStore
 }
 
 func (h *CaptureScheduleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +21,7 @@ func (h *CaptureScheduleHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *CaptureScheduleHandler) get(w http.ResponseWriter) {
-	captureSchedule, err := h.CaptureScheduleRepository.GetActiveCaptureSchedule()
+	captureSchedule, err := h.CaptureScheduleStore.GetActiveCaptureSchedule()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

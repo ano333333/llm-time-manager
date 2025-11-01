@@ -4,21 +4,21 @@ import (
 	"database/sql"
 	"errors"
 
-	datamodels "github.com/ano333333/llm-time-manager/server/cmd/api/data-models"
+	datamodel "github.com/ano333333/llm-time-manager/server/internal/data-model"
 )
 
-type CaptureScheduleRepository interface {
-	GetActiveCaptureSchedule() (*datamodels.CaptureSchedule, error)
+type CaptureScheduleStore interface {
+	GetActiveCaptureSchedule() (*datamodel.CaptureSchedule, error)
 }
 
-type DefaultCaptureScheduleRepository struct {
+type DefaultCaptureScheduleStore struct {
 	DB *sql.DB
 }
 
-func (r *DefaultCaptureScheduleRepository) GetActiveCaptureSchedule() (*datamodels.CaptureSchedule, error) {
-	var row datamodels.CaptureSchedule
+func (s *DefaultCaptureScheduleStore) GetActiveCaptureSchedule() (*datamodel.CaptureSchedule, error) {
+	var row datamodel.CaptureSchedule
 
-	rows, err := r.DB.Query("SELECT * FROM capture_schedules WHERE active = 1")
+	rows, err := s.DB.Query("SELECT * FROM capture_schedules WHERE active = 1")
 	if err != nil {
 		return nil, err
 	}
