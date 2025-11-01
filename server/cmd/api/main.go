@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/ano333333/llm-time-manager/server/cmd/api/handlers"
+	"github.com/ano333333/llm-time-manager/server/cmd/api/repositories"
 	"github.com/ano333333/llm-time-manager/server/internal/database"
 	"github.com/joho/godotenv"
 )
@@ -51,6 +53,9 @@ func main() {
 		log.Printf("failed to write to stdout: %v", err)
 	}
 
+	// リポジトリ
+	captureScheduleRepository := repositories.DefaultCaptureScheduleRepository{DB: db}
+
 	// PORTの取得
 	err = godotenv.Load(".env")
 	if err != nil {
@@ -67,5 +72,6 @@ func main() {
 		Handler: nil,
 	}
 
+	http.Handle("/capture/schedule", &handlers.CaptureScheduleHandler{CaptureScheduleRepository: &captureScheduleRepository})
 	server.ListenAndServe()
 }
