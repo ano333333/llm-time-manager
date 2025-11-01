@@ -22,6 +22,30 @@
           buildInputs = import ./nix/packages.nix { inherit pkgs; };
           shellHook = import ./nix/shell-hook.nix;
         };
+
+        apps.fmt = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "fmt" ''
+              # 現在のディレクトリを保存
+              ROOT_DIR="$PWD"
+
+              echo "🎨 Formatting web..."
+              cd "$ROOT_DIR/web"
+              ${pkgs.biome}/bin/biome check --write . || true
+              ${pkgs.nodePackages.prettier}/bin/prettier --write '**/*.{md,yaml,yml}' || true
+
+              echo ""
+              echo "🎨 Formatting server..."
+              cd "$ROOT_DIR/server"
+              ${pkgs.gofumpt}/bin/gofumpt -l -w . || true
+              ${pkgs.gotools}/bin/goimports -w . || true
+
+              echo ""
+              echo "✅ Formatting completed!"
+            ''
+          );
+        };
       }
     );
 }
