@@ -132,6 +132,29 @@ direnv allow
 - Linux (x86_64, aarch64)
 - macOS (x86_64, aarch64)
 
+### コードフォーマット
+
+プロジェクト全体（web、server）を一度にフォーマットするには：
+
+```bash
+nix run .#fmt
+```
+
+このコマンドは以下を実行します：
+
+- **web**: Biome（TypeScript/JavaScript/CSS/JSON）とPrettier（Markdown/YAML）
+- **server**: gofumpt と goimports（Go）
+
+個別にフォーマットする場合：
+
+```bash
+# web のみ
+cd web && pnpm run format && pnpm run format:other
+
+# server のみ
+cd server && make fmt
+```
+
 ## 開発・配布
 
 - **server**: 単体バイナリ（Go）

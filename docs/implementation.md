@@ -1,5 +1,48 @@
 # 実装ガイド
 
+## コード品質維持
+
+### フォーマット
+
+開発時のコード品質を保つため、commit前に必ずフォーマットを実行すること。
+
+```bash
+# プロジェクト全体をフォーマット（推奨）
+nix run .#fmt
+
+# web のみ
+cd web && pnpm run format && pnpm run format:other
+
+# server のみ
+cd server && make fmt
+```
+
+各フォーマッタの役割：
+
+- **web**
+  - Biome: TypeScript/JavaScript/CSS/JSON
+  - Prettier: Markdown/YAML
+- **server**
+  - gofumpt: Goコードフォーマッタ（gofmtの改善版）
+  - goimports: import文の整理
+
+### リンター
+
+```bash
+# web
+cd web && pnpm run lint
+
+# server
+cd server && make lint
+```
+
+### commit前のチェックリスト
+
+1. ✅ フォーマットを実行（`nix run .#fmt`）
+2. ✅ リンターエラーがないことを確認
+3. ✅ 不要になったコード・ファイルを削除
+4. ✅ テストが通ることを確認
+
 ## 実装メモ
 
 ### フロントエンド（React）
