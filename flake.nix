@@ -27,8 +27,6 @@
           type = "app";
           program = toString (
             pkgs.writeShellScript "fmt" ''
-              set -e
-              
               # 現在のディレクトリを保存
               ROOT_DIR="$PWD"
               
@@ -40,8 +38,8 @@
               echo ""
               echo "🎨 Formatting server..."
               cd "$ROOT_DIR/server"
-              ${pkgs.gofumpt}/bin/gofumpt -l -w .
-              ${pkgs.gotools}/bin/goimports -w .
+              ${pkgs.gofumpt}/bin/gofumpt -l -w . || true
+              ${pkgs.gotools}/bin/goimports -w . || true
               
               echo ""
               echo "✅ Formatting completed!"
