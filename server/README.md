@@ -154,55 +154,6 @@ cp config.example.yaml config.local.yaml
 このプロジェクトでは [pressly/goose](https://github.com/pressly/goose) を使用してデータベースマイグ
 レーションを管理しています。
 
-### マイグレーションの基本
-
-マイグレーションファイルは `migrations/` ディレクトリに配置され、以下の命名規則に従います：
-
-- **タイムスタンプ**: `YYYYMMDDhhmmss` 形式
-- **説明**: スネークケースで処理内容を記述
-- **拡張子**: `.sql`
-
-例: `20251031195047_create_tasks_table.sql`
-
-### マイグレーションファイルの構造
-
-goose では、1 つのファイルに UP と DOWN の両方を記述します：
-
-```sql
--- +goose Up
--- マイグレーション適用時の処理
-CREATE TABLE tasks (...);
-
--- +goose Down
--- ロールバック時の処理
-DROP TABLE tasks;
-```
-
-### マイグレーションの実行方法
-
-#### 1. アプリケーション起動時に自動実行（推奨）
-
-サーバーを起動すると、自動的に最新バージョンまでマイグレーションが実行されます：
-
-```bash
-make run
-# または
-go run ./cmd/api
-```
-
-#### 2. goose CLI から直接実行
-
-```bash
-# マイグレーションを最新まで適用
-goose -dir migrations sqlite3 ./data/llm-time-manager.db up
-
-# 1つ前のバージョンにロールバック
-goose -dir migrations sqlite3 ./data/llm-time-manager.db down
-
-# 現在のマイグレーションステータスを確認
-goose -dir migrations sqlite3 ./data/llm-time-manager.db status
-```
-
 ### 新しいマイグレーションの作成
 
 ```bash
@@ -211,74 +162,6 @@ goose -dir migrations create <migration_name> sql
 ```
 
 これにより、タイムスタンプ付きのマイグレーションファイルが自動生成されます。
-
-### マイグレーションの書き方のポイント
-
-#### 冪等性の確保
-
-`IF NOT EXISTS` / `IF EXISTS` を使用して、同じマイグレーションを複数回実行しても安全にします：
-
-```sql
--- +goose Up
-CREATE TABLE IF NOT EXISTS tasks (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
-
--- +goose Down
-DROP INDEX IF EXISTS idx_tasks_status;
-DROP TABLE IF EXISTS tasks;
-```
-
-#### StatementBegin/End の使用
-
-複数行のステートメント（特に BEGIN...END を含むもの）には、`-- +goose StatementBegin` と
-`-- +goose StatementEnd` で囲む必要があります：
-
-```sql
--- +goose StatementBegin
-CREATE TRIGGER IF NOT EXISTS update_tasks_updated_at
-    AFTER UPDATE ON tasks
-    FOR EACH ROW
-BEGIN
-    UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
-END;
--- +goose StatementEnd
-```
-
-#### ロールバックの順序
-
-Down セクションは Up セクションと**逆順**で削除します：
-
-```sql
--- +goose Down
-DROP TRIGGER IF EXISTS update_tasks_updated_at;  -- 最後に作成したものから削除
-DROP INDEX IF EXISTS idx_tasks_status;
-DROP TABLE IF EXISTS tasks;
-```
-
-### トラブルシューティング
-
-#### マイグレーションファイルのエラー
-
-マイグレーション実行時に SQL エラーが発生する場合：
-
-- SQL シンタックスエラーがないか確認
-- セミコロン `;` で各ステートメントを終了しているか確認
-- TRIGGER などの複数行ステートメントに `StatementBegin/End` を使用しているか確認
-
-#### マイグレーションが適用されない
-
-`goose up` を実行しても何も変わらない場合：
-
-- `goose -dir migrations sqlite3 ./data/llm-time-manager.db status` で Pending のマイグレーションが
-  あるか確認
-- マイグレーションファイルの命名規則が正しいか確認
-
-詳細なマイグレーション使用方法は [README_MIGRATION.md](./README_MIGRATION.md) を参照してください。
 
 ## API 仕様
 
