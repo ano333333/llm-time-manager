@@ -4,25 +4,30 @@ globs:
 alwaysApply: true
 ---
 
+## コマンド仕様について
+
+- 必要な開発環境は flake.nix に定義されている devShell に追加し、devShell で開発環境が完結するようにしてください。
+- GitHub の操作は、devShell 上の`gh`コマンドを使用してください。
+
 ## 参照するファイルについて
 
-- README.mdにこのリポジトリの概要を記載しているので、必ず読み込むこと。
+- README.md にこのリポジトリの概要を記載しているので、必ず読み込むこと。
 - docs/配下のドキュメントは、以下の概要を見て適宜読み込むこと。
-  - api.md: サーバーが実装しているAPI
+  - api.md: サーバーが実装している API
   - architecture.md: WebView、クライアントのネイティブ、サーバーなどの構成について
-  - bridge-interface.md: WebViewとクライアントネイティブの間のブリッヂングメッセージについて
-  - data-model.md: サーバーがDBに保存するデータモデル
+  - bridge-interface.md: WebView とクライアントネイティブの間のブリッヂングメッセージについて
+  - data-model.md: サーバーが DB に保存するデータモデル
   - flows.md: 想定ユーザーフローと内部のシステム間のシーケンス
-  - implementation.md: 各言語における実装のtips
-  - platform-specific.md: 各OSにおけるキャプチャ実装と権限管理の詳細
+  - implementation.md: 各言語における実装の tips
+  - platform-specific.md: 各 OS におけるキャプチャ実装と権限管理の詳細
   - state-machines.md: アプリに含まれるステートの遷移
-  - ui-design.md: UI設計
+  - ui-design.md: UI 設計
 
-## Git/GitHub運用について
+## Git/GitHub 運用について
 
 ### commit
 
-commitには以下のprefixのいずれかをつけること。
+commit には以下の prefix のいずれかをつけること。
 
 - feat: サービスのユーザー(開発者ではない)から見える新しい機能の実装
 - fix: バグの修正
@@ -34,7 +39,7 @@ commitには以下のprefixのいずれかをつけること。
 - chore: コマンド実行やツール実行の結果生じた変更
 - tool: 新規ツールの導入のための変更
 
-また特定のデバイスに対する変更の場合、どれに対するcommitかをprefixに続けて書くこと。`feat(web)`、`fix(windows)`など。コンポーネントは以下の中から選ぶ。
+また特定のデバイスに対する変更の場合、どれに対する commit かを prefix に続けて書くこと。`feat(web)`、`fix(windows)`など。コンポーネントは以下の中から選ぶ。
 
 - web
 - server
@@ -43,40 +48,40 @@ commitには以下のprefixのいずれかをつけること。
 - mac
 - ios
 
-**上記のprefixのいずれか1つに収まる分量**をcommmitすること。複数のprefixにまたがる変更は分割してcommitする。
+**上記の prefix のいずれか 1 つに収まる分量**を commmit すること。複数の prefix にまたがる変更は分割して commit する。
 
-例: webの新しい機能をTDDで実装し全体ドキュメントを修正した場合、
+例: web の新しい機能を TDD で実装し全体ドキュメントを修正した場合、
 
-- テスト追加のcommit: test(web)
-- 新機能の本実装を行うcommit: feat(web)
-- 新機能に関するドキュメント修正のcommit: docs
+- テスト追加の commit: test(web)
+- 新機能の本実装を行う commit: feat(web)
+- 新機能に関するドキュメント修正の commit: docs
 
 に分ける。
 
-### commit前のチェック事項
+### commit 前のチェック事項
 
-- formatterが設定されていrる場合formatterを実行すること。
-- 変更を加えたファイルでエラーが出ている場合はcommit前に修正すること。
-- この変更により不要になったファイル・コードが無いか、都度確認すること。不要なファイル・コードは次のcommitで削除すること。
+- formatter が設定されてい r る場合 formatter を実行すること。
+- 変更を加えたファイルでエラーが出ている場合は commit 前に修正すること。
+- この変更により不要になったファイル・コードが無いか、都度確認すること。不要なファイル・コードは次の commit で削除すること。
   - 例: ファイル内のヘルパーメソッドを使用しなくなったため、削除する。
-  - 例: あるグローバル関数を使用しなくなりimport文が必要なくなったため、import文を削除する
-  - 例: import文を削除したことでどのファイルからもimportされないファイルができたため、ファイルを削除する。
+  - 例: あるグローバル関数を使用しなくなり import 文が必要なくなったため、import 文を削除する
+  - 例: import 文を削除したことでどのファイルからも import されないファイルができたため、ファイルを削除する。
 
-### issueについて
+### issue について
 
-issueを元に機能追加・修正を行うこと。作業に対するissueが存在しない場合は、issue追加から始めること。
+issue を元に機能追加・修正を行うこと。作業に対する issue が存在しない場合は、issue 追加から始めること。
 
-### PRについて
+### PR について
 
-issueに対する実装が終わったらPRを作成すること。
+issue に対する実装が終わったら PR を作成すること。
 
 ### ブランチ運用について
 
-各issueに対し`issues/{issue-id}`ブランチを切り、mainブランチへのMRを作成する。
+各 issue に対し`issues/{issue-id}`ブランチを切り、main ブランチへの MR を作成する。
 
-例: issue #10に対し、`issues/10`ブランチを切る。
+例: issue #10 に対し、`issues/10`ブランチを切る。
 
-### PR作成前のチェック事項
+### PR 作成前のチェック事項
 
 - ドキュメント(README.md、docs/配下の.md)に変更が必要ないか確認すること。
 - テストがすべてパスすることを確認すること。
