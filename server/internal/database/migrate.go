@@ -43,29 +43,3 @@ func GetMigrationVersion(db *sql.DB) (int64, error) {
 
 	return version, nil
 }
-
-// DownMigration は1つ前のバージョンにロールバックする
-func DownMigration(db *sql.DB, migrationsDir string) error {
-	if err := goose.SetDialect("sqlite3"); err != nil {
-		return fmt.Errorf("failed to set goose dialect: %w", err)
-	}
-
-	if err := goose.Down(db, migrationsDir); err != nil {
-		return fmt.Errorf("failed to rollback migration: %w", err)
-	}
-
-	return nil
-}
-
-// ResetMigrations はすべてのマイグレーションをロールバックする
-func ResetMigrations(db *sql.DB, migrationsDir string) error {
-	if err := goose.SetDialect("sqlite3"); err != nil {
-		return fmt.Errorf("failed to set goose dialect: %w", err)
-	}
-
-	if err := goose.Reset(db, migrationsDir); err != nil {
-		return fmt.Errorf("failed to reset migrations: %w", err)
-	}
-
-	return nil
-}
