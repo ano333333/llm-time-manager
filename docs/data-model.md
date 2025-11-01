@@ -14,7 +14,7 @@
 
 ```mermaid
 erDiagram
-  GOAL ||--o{ TASK : has
+  GOAL o|--o{ TASK : has
   TASK ||--o{ SCREENSHOT : attaches
   GOAL ||--o{ SCREENSHOT : relates
   CAPTURE_SCHEDULE ||--o{ SCREENSHOT : produces
