@@ -85,3 +85,96 @@ issue に対する実装が終わったら PR を作成すること。
 
 - ドキュメント(README.md、docs/配下の.md)に変更が必要ないか確認すること。
 - テストがすべてパスすることを確認すること。
+
+## Issue タグ運用について
+
+### 使用可能なタグ一覧
+
+#### タイプ別タグ
+
+- `bug`: バグ修正（バグ報告テンプレートから自動付与）
+- `enhancement`: 新機能・機能改善（機能追加テンプレートから自動付与）
+- `documentation`: ドキュメントの追加・修正
+- `question`: 質問・情報確認
+
+#### 状態別タグ
+
+- `duplicate`: 重複 issue
+- `invalid`: 無効な issue
+- `wontfix`: 対応しない
+
+#### コンポーネント別タグ
+
+以下のコンポーネント別タグを使用して、issue がどのコンポーネントに関連するかを明示する。
+
+- `web`: フロントエンド (React) - commit prefix: `(web)`
+- `server`: バックエンド (Go) - commit prefix: `(server)`
+- `ubuntu`: Ubuntu クライアント (Rust) - commit prefix: `(ubuntu)`
+- `windows`: Windows クライアント (C++) - commit prefix: `(windows)`
+- `mac`: macOS クライアント (Swift) - commit prefix: `(mac)`
+- `ios`: iOS/iPadOS クライアント (Swift) - commit prefix: `(ios)`
+
+### タグ付与ルール
+
+#### issue テンプレート使用時の自動付与
+
+- **バグ報告テンプレート**: `bug`タグが自動的に付与される
+- **機能追加テンプレート**: `enhancement`タグが自動的に付与される
+
+#### コンポーネントタグの付与基準
+
+issue テンプレートの「影響範囲」チェックボックスに基づいて、以下のルールでコンポーネントタグを付与すること:
+
+- 単一コンポーネントのみに影響する場合: そのコンポーネントのタグのみを付与
+- 複数コンポーネントにまたがる場合: すべての関連コンポーネントのタグを付与
+- 全体に影響する場合（ドキュメント、アーキテクチャ等）: コンポーネントタグを付与しない
+
+例:
+
+- WebView のみの変更 → `web`
+- サーバー API とフロントエンドの両方を変更 → `server`, `web`
+- README.md のみの更新 → コンポーネントタグなし
+
+#### その他のタグ付与基準
+
+- `documentation`: ドキュメントの追加・修正が主な目的の場合に付与
+- `duplicate`: 既存の issue と重複している場合に付与し、重複元の issue 番号をコメントに記載
+- `invalid`: issue の内容が不適切または無効な場合に付与
+- `wontfix`: 対応しないことを決定した場合に付与し、理由をコメントに記載
+- `good first issue`: 初めて貢献する人に適した issue に付与（難易度が低く、範囲が明確）
+- `help wanted`: プロジェクトメンバー外からの助けが必要な場合に付与
+
+### commit prefix とタグの対応関係
+
+commit 時の prefix（例: `feat(web)`, `fix(server)`）と issue タグは以下のように対応する:
+
+| commit prefix                                        | 対応する issue タグ |
+| ---------------------------------------------------- | ------------------- |
+| `feat`                                               | `enhancement`       |
+| `fix`                                                | `bug`               |
+| `docs`                                               | `documentation`     |
+| `style`, `refactor`, `perf`, `test`, `chore`, `tool` | （対応タグなし）    |
+
+コンポーネント指定: commit prefix の `(web)`, `(server)`, `(windows)`, `(ubuntu)`, `(mac)`, `(ios)` は、それぞれ対応するコンポーネントタグと連動する。
+
+### タグ運用の注意点
+
+#### タグの組み合わせ
+
+以下のタグの組み合わせが一般的:
+
+- `bug` + コンポーネントタグ（1 つ以上）
+- `enhancement` + コンポーネントタグ（1 つ以上）
+- `documentation`（単独、またはコンポーネントタグと組み合わせ）
+- `question`（単独）
+
+#### タグの更新タイミング
+
+- issue の作成時: テンプレートによる自動付与 + 影響範囲に基づくコンポーネントタグの手動付与
+- issue の調査中: 状況に応じて`duplicate`, `invalid`等を付与
+- issue のクローズ時: 必要に応じて`wontfix`を付与
+
+#### タグの一貫性
+
+- 同一のバグや機能に関連する複数の issue には、同じコンポーネントタグを付与する
+- PR と issue でタグの整合性を保つ（PR は対応する issue のタグを参照）
