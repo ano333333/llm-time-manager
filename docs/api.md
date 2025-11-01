@@ -295,6 +295,12 @@ data: [DONE]
 }
 ```
 
+```json
+{
+  "schedule": null
+}
+```
+
 ### PUT /capture/schedule
 
 キャプチャスケジュール作成/更新。
