@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	"github.com/pressly/goose/v3"
 )
@@ -11,6 +12,11 @@ import (
 // db: データベース接続
 // migrationsDir: マイグレーションファイルのディレクトリパス（例: "./migrations"）
 func RunMigrations(db *sql.DB, migrationsDir string) error {
+	// ディレクトリの存在確認
+	if _, err := os.Stat(migrationsDir); os.IsNotExist(err) {
+		return fmt.Errorf("migration directory not found: %w", err)
+	}
+
 	// gooseのダイアレクトを設定
 	if err := goose.SetDialect("sqlite3"); err != nil {
 		return fmt.Errorf("failed to set goose dialect: %w", err)
