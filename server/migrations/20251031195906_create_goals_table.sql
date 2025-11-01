@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS goals (
     start_date DATE,
     end_date DATE,
     kpi_name TEXT,
-    kpi_target FLOAT,
+    kpi_target REAL,
     kpi_unit TEXT,
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'done')),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
