@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS goals (
 CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);
 
 CREATE TRIGGER IF NOT EXISTS update_goals_updated_at
-    AFTER UPDATE ON goals
+    BEFORE UPDATE ON goals
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    UPDATE goals SET updatedAt = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE goals SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 
 -- +goose StatementEnd

@@ -17,8 +17,9 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_role ON chat_messages(role);
 CREATE TRIGGER IF NOT EXISTS update_chat_messages_updated_at
     AFTER UPDATE ON chat_messages
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    UPDATE chat_messages SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE chat_messages SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 -- +goose StatementEnd
 

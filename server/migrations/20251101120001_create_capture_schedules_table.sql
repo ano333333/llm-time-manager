@@ -15,8 +15,9 @@ CREATE TABLE IF NOT EXISTS capture_schedules (
 CREATE TRIGGER IF NOT EXISTS update_capture_schedules_updated_at
     AFTER UPDATE ON capture_schedules
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    UPDATE capture_schedules SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE capture_schedules SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 -- +goose StatementEnd
 

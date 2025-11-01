@@ -23,10 +23,11 @@ CREATE INDEX IF NOT EXISTS idx_screenshots_mode ON screenshots(mode);
 -- updated_atの自動更新トリガー
 -- +goose StatementBegin
 CREATE TRIGGER IF NOT EXISTS update_screenshots_updated_at
-    AFTER UPDATE ON screenshots
+    BEFORE UPDATE ON screenshots
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    UPDATE screenshots SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE screenshots SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 -- +goose StatementEnd
 

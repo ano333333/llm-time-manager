@@ -25,10 +25,11 @@ CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at);
 -- updated_atの自動更新トリガー
 -- +goose StatementBegin
 CREATE TRIGGER IF NOT EXISTS update_tasks_updated_at
-    AFTER UPDATE ON tasks
+    BEFORE UPDATE ON tasks
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 -- +goose StatementEnd
 
