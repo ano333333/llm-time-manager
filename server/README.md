@@ -53,13 +53,14 @@ server/
 ├── cmd/
 │   └── api/              # メインエントリーポイント
 ├── internal/
-│   ├── http/            # HTTPハンドラとルーター
+│   ├── handler/         # HTTPハンドラとルーター
 │   ├── ws/              # WebSocket/SSEハンドラ
 │   ├── store/           # データベースアクセス層
 │   ├── capture/         # スクリーンショットキャプチャ管理
 │   ├── llm/             # LLMクライアント
 │   ├── config/          # 設定管理
 │   └── logging/         # ロギング
+│   └── data-model/      # データモデル型定義
 ├── migrations/          # データベースマイグレーション
 ├── go.mod
 └── go.sum
