@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/ano333333/llm-time-manager/server/internal/database"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -44,10 +47,25 @@ func main() {
 		log.Printf("Migration version: %d", version)
 	}
 
-	// TODO: サーバー設定の読み込み
-	// TODO: HTTPサーバーの起動
-
 	if _, err := fmt.Fprintln(os.Stdout, "Server is ready"); err != nil {
 		log.Printf("failed to write to stdout: %v", err)
 	}
+
+	// PORTの取得
+	err = godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("failed to load .env file: %v", err)
+	}
+	PORT, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		log.Fatalf("failed to convert PORT to int: %v", err)
+	}
+	log.Printf("Server will be running on port %d", PORT)
+
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%d", PORT),
+		Handler: nil,
+	}
+
+	server.ListenAndServe()
 }
