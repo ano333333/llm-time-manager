@@ -152,13 +152,17 @@ data: [DONE]
 
 ## 目標
 
-### GET /goals
+### GET /goal
 
 目標一覧取得。
 
 #### query parameter
 
-- `status` (optional): フィルタ（`active|paused|done`）
+- `status` (optional): フィルタ（`active|paused|done`）、カンマ区切り。指定されない、または空白文字列の場合、空配列を返す。
+
+```
+GET /goal?status=active,paused
+```
 
 #### response: 200
 
@@ -169,20 +173,48 @@ data: [DONE]
       "id": "goal-456",
       "title": "週10時間の集中作業",
       "description": "...",
-      "startDate": "2025-10-01",
-      "endDate": "2025-12-31",
+      "start_date": "2025-10-01",
+      "end_date": "2025-12-31",
       "kpi_name": "集中作業時間",
       "kpi_target": 10,
       "kpi_unit": "時間",
       "status": "active",
-      "createdAt": "2025-10-01T00:00:00Z",
-      "updatedAt": "2025-10-01T00:00:00Z"
+      "created_at": "2025-10-01T00:00:00Z",
+      "updated_at": "2025-10-01T00:00:00Z"
     }
   ]
 }
 ```
 
-### POST /goals
+```ts
+{
+  goals: Array<{
+    id: string,
+    title: string,
+    description: string,
+    start_date: string,
+    end_date: string,
+    kpi_name: string | null,
+    kpi_target: number | null,
+    kpi_unit: string | null,
+    status: "active" | "paused" | "done",
+    created_at: string,
+    updated_at: string,
+  }>,
+}
+```
+
+- start_date, end_date は`YYYY-MM-DD`形式である
+- created_at, updated_at は ISO8601 形式である
+- kpi_name, kpi_target, kpi_unit はすべて null かすべて非 null かのいずれかである
+- goals の要素は id 昇順
+
+#### response: error
+
+- 400: query parameter が不正
+- 500: 内部エラー
+
+### POST /goal
 
 目標作成。
 
@@ -192,13 +224,33 @@ data: [DONE]
 {
   "title": "週10時間の集中作業",
   "description": "...",
-  "startDate": "2025-10-01",
-  "endDate": "2025-12-31",
+  "start_date": "2025-10-01",
+  "end_date": "2025-12-31",
   "kpi_name": "集中作業時間",
   "kpi_target": 10,
-  "kpi_unit": "時間"
+  "kpi_unit": "時間",
+  "status": "active"
 }
 ```
+
+```ts
+{
+  title: string,
+  description: string,
+  start_date: string,
+  end_date: string,
+  kpi_name: string | null,
+  kpi_target: number | null,
+  kpi_unit: string | null,
+  status: "active"|"paused"|"done",
+}
+```
+
+- title は空白文字(`\s`)のみで構成されてはならない
+- start_date と end_date は`"YYYY-MM-DD"`形式の string
+- start_date は end_date 以下
+- kpi_name, kpi_target, kpi_unit のいずれかが非 null ならば、それ以外の値もすべて非 null である
+- kpi_name と kpi_unit は、string ならば空白文字のみで構成されてはならない
 
 #### response: 200
 
@@ -211,7 +263,27 @@ data: [DONE]
 }
 ```
 
-### PATCH /goals/:id
+```ts
+{
+  id: string,
+  title: string,
+  description: string,
+  start_date: string,
+  end_date: string,
+  kpi_name: string | null,
+  kpi_target: number | null,
+  kpi_unit: string | null,
+  status: "active" | "paused" | "done",
+  created_at: string,
+  updated_at: string,
+}
+```
+
+- start_date, end_date は`YYYY-MM-DD`形式である
+- created_at, updated_at は ISO8601 形式である
+- kpi_name, kpi_target, kpi_unit はすべて null かすべて非 null かのいずれかである
+
+### PATCH /goal/:id
 
 目標更新。
 
@@ -222,6 +294,25 @@ data: [DONE]
   "status": "done"
 }
 ```
+
+```ts
+{
+  title?: string,
+  description?: string,
+  start_data?: string,
+  end_date?: string,
+  kpi_name?: string,
+  kpi_target?: number,
+  kpi_unit?: string,
+  status?: "active"|"paused"|"done",
+}
+```
+
+- title は空白文字(`\s`)のみで構成されてはならない
+- start_date, end_date は`"YYYY-MM-DD"`形式の string
+- start_date が end_date より大きくなる更新は適用されない
+- kpi_name, kpi_target, kpi_unit のうち 1 つ以上が null かつ 1 つ以上が非 null になる更新は適用されない
+- kpi_name, kpi_unit は string ならば空白文字のみで構成されてはならない
 
 #### response: 200
 
