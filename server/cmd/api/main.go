@@ -1,36 +1,19 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
+	setuphandlers "github.com/ano333333/llm-time-manager/server/cmd/api/setup"
 	"github.com/ano333333/llm-time-manager/server/internal/database"
-	"github.com/ano333333/llm-time-manager/server/internal/handler"
-	"github.com/ano333333/llm-time-manager/server/internal/store"
-	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
 	"github.com/joho/godotenv"
 )
 
 const defaultDBPath = "./data/dev.db"
 const defaultPort = 8080
-
-func setupHandlers(db *sql.DB) *http.ServeMux {
-	mux := http.NewServeMux()
-
-	// リポジトリ
-	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
-	goalStore := store.DefaultGoalStore{DB: db}
-
-	// ハンドラ
-	mux.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
-	mux.Handle("/goal", &handler.GoalHandler{GoalStore: &goalStore})
-
-	return mux
-}
 
 func main() {
 	log.Println("LLM時間管理ツール - Server starting...")
@@ -85,7 +68,7 @@ func main() {
 	}
 	log.Printf("Server will be running on port %d", port)
 
-	mux := setupHandlers(db)
+	mux := setuphandlers.SetupHandlers(db)
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,
