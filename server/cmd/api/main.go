@@ -14,6 +14,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const defaultDBPath = "./data/dev.db"
+const defaultPort = 8080
+
 func setupHandlers(db *sql.DB) *http.ServeMux {
 	mux := http.NewServeMux()
 
@@ -38,7 +41,7 @@ func main() {
 	// データベースパスの設定
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "./data/llm-time-manager.db"
+		dbPath = defaultDBPath
 	}
 
 	// データベース接続の初期化
@@ -73,15 +76,15 @@ func main() {
 	}
 
 	// PORTの取得
-	PORT, err := strconv.Atoi(os.Getenv("PORT"))
+	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		log.Fatalf("failed to convert PORT to int: %v", err)
+		port = defaultPort
 	}
-	log.Printf("Server will be running on port %d", PORT)
+	log.Printf("Server will be running on port %d", port)
 
 	mux := setupHandlers(db)
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%d", PORT),
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,
 	}
 	server.ListenAndServe()
