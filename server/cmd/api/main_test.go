@@ -83,7 +83,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 
 		// Assert
-		assert.Equal(t, rec.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, rec.Code)
 		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
 		assert.JSONEq(t, `{"schedule": null}`, response)
@@ -130,7 +130,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 
 		// Assert
-		assert.Equal(t, rec.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, rec.Code)
 		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
 		expected, err := json.Marshal(map[string]interface{}{
@@ -182,6 +182,6 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 
 		// Assert
-		assert.Equal(t, rec.Code, http.StatusInternalServerError)
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	})
 }
