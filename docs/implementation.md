@@ -332,6 +332,55 @@ function MetricsDashboard() {
 - **フロント**: React Testing Library + Vitest
 - **バック**: Go の標準 `testing` パッケージ
 
+### E2E/コンポーネントテスト（Playwright）
+
+Playwrightを使用したE2Eテストとコンポーネントテストを実装しています。
+
+#### テスト実行
+
+```bash
+cd web
+
+# ヘッドレスモードでテスト実行
+pnpm test
+
+# UIモードでテスト実行（インタラクティブ）
+pnpm test:ui
+
+# ブラウザを表示してテスト実行
+pnpm test:headed
+```
+
+#### 初回セットアップ
+
+```bash
+cd web
+pnpm exec playwright install chromium webkit
+```
+
+#### 対象ブラウザ
+
+- Chromium（Chrome/Edge相当）
+- WebKit（Safari相当）
+
+#### テストディレクトリ構成
+
+```
+web/tests/
+├── e2e/              # E2Eテスト
+│   └── navigation.spec.ts
+└── components/       # コンポーネントテスト
+    ├── header.spec.ts
+    └── layout.spec.ts
+```
+
+#### テスト作成のベストプラクティス
+
+- **セレクタ**: role-based セレクタを優先（`getByRole`, `getByLabel`）
+- **待機**: 明示的な待機を使用（`expect().toBeVisible()`）
+- **再現性**: テストデータをモックまたは初期化
+- **独立性**: テスト間で状態を共有しない
+
 ```go
 // テスト例
 func TestCreateTask(t *testing.T) {

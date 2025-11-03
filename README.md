@@ -155,6 +155,34 @@ cd web && pnpm run format && pnpm run format:other
 cd server && make fmt
 ```
 
+### テスト
+
+#### webのE2E/コンポーネントテスト（Playwright）
+
+webディレクトリでは、Playwrightを使用したE2Eテストとコンポーネントテストが利用可能です。
+
+```bash
+cd web
+
+# テスト実行（ヘッドレスモード）
+pnpm test
+
+# UIモードでテスト実行
+pnpm test:ui
+
+# ブラウザを表示してテスト実行
+pnpm test:headed
+```
+
+**初回のみ**: Playwrightのブラウザをインストールする必要があります：
+
+```bash
+cd web
+pnpm exec playwright install chromium webkit
+```
+
+対応ブラウザ: Chromium、WebKit
+
 ## 開発・配布
 
 - **server**: 単体バイナリ（Go）
