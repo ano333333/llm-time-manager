@@ -28,6 +28,7 @@ func BeforeEach() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 	if err = database.RunMigrations(db, migrationsDir); err != nil {
+		db.Close()
 		return nil, fmt.Errorf("failed to run migrations: %w", err)
 	}
 	return db, nil
