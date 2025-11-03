@@ -16,6 +16,11 @@ import (
 func main() {
 	log.Println("LLM時間管理ツール - Server starting...")
 
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("failed to load .env file: %v", err)
+	}
+
 	// データベースパスの設定
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
@@ -57,10 +62,6 @@ func main() {
 	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
 
 	// PORTの取得
-	err = godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("failed to load .env file: %v", err)
-	}
 	PORT, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		log.Fatalf("failed to convert PORT to int: %v", err)
