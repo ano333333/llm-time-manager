@@ -41,16 +41,12 @@ func afterEach(db *sql.DB) {
 	os.Setenv(dbPathKey, originalDBPath)
 }
 
-func readResponseBody(rec *httptest.ResponseRecorder) (map[string]interface{}, error) {
+func getResponseBodyJson(rec *httptest.ResponseRecorder) (string, error) {
 	body, err := io.ReadAll(rec.Result().Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read body: %w", err)
+		return "", fmt.Errorf("failed to read body: %w", err)
 	}
-	var response map[string]interface{}
-	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal body: %w", err)
-	}
-	return response, nil
+	return string(body), nil
 }
 
 func insertCaptureSchedules(db *sql.DB, schedules []datamodel.CaptureSchedule) error {
@@ -88,9 +84,9 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, rec.Code, http.StatusOK)
-		response, err := readResponseBody(rec)
+		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.Nil(t, response["schedule"])
+		assert.JSONEq(t, `{"schedule": null}`, response)
 	})
 
 	t.Run("GET /capture/schedule はアクティブなスケジュールが 1 つだけあればそれを返す", func(t *testing.T) {
@@ -135,14 +131,13 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, rec.Code, http.StatusOK)
-		response, err := readResponseBody(rec)
+		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.NotNil(t, response["schedule"])
-		assert.Equal(t, schedules[1].ID, response["schedule"].(map[string]interface{})["id"])
-		assert.Equal(t, schedules[1].Active, response["schedule"].(map[string]interface{})["active"])
-		assert.Equal(t, schedules[1].IntervalMin, response["schedule"].(map[string]interface{})["interval_min"])
-		assert.Equal(t, schedules[1].RetentionMaxItems, response["schedule"].(map[string]interface{})["retention_max_items"])
-		assert.Equal(t, schedules[1].RetentionMaxDays, response["schedule"].(map[string]interface{})["retention_max_days"])
+		expected, err := json.Marshal(map[string]interface{}{"schedule": schedules[1]})
+		if err != nil {
+			t.Fatalf("failed to marshal expected: %v", err)
+		}
+		assert.JSONEq(t, string(expected), response)
 	})
 
 	t.Run("GET /capture/schedule は複数のアクティブなスケジュールがあれば 500 Internal Server Error を返す", func(t *testing.T) {
