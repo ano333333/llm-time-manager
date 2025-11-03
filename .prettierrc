@@ -1,15 +1,6 @@
 {
-  "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false,
-  "endOfLine": "lf",
-  "overrides": [
-    {
-      "files": ["*.md", "*.yaml", "*.yml"],
-      "options": {
-        "proseWrap": "always"
-      }
-    }
-  ]
+	"printWidth": 100,
+	"tabWidth": 2,
+	"useTabs": false,
+	"endOfLine": "lf"
 }
-
