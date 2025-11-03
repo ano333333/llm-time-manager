@@ -365,7 +365,7 @@ pnpm exec playwright install chromium webkit
 
 #### テストディレクトリ構成
 
-```
+```plaintext
 web/tests/
 ├── e2e/              # E2Eテスト
 │   └── navigation.spec.ts
@@ -380,30 +380,6 @@ web/tests/
 - **待機**: 明示的な待機を使用（`expect().toBeVisible()`）
 - **再現性**: テストデータをモックまたは初期化
 - **独立性**: テスト間で状態を共有しない
-
-```go
-// テスト例
-func TestCreateTask(t *testing.T) {
-    store := NewTestStore(t)
-    defer store.Close()
-
-    task := &Task{
-        ID:          "task-123",
-        Title:       "テストタスク",
-        Description: "説明",
-        Due:         time.Now().Add(24 * time.Hour),
-        Status:      "todo",
-    }
-
-    err := store.CreateTask(context.Background(), task)
-    assert.NoError(t, err)
-
-    // 取得して確認
-    got, err := store.GetTask(context.Background(), task.ID)
-    assert.NoError(t, err)
-    assert.Equal(t, task.Title, got.Title)
-}
-```
 
 ### 統合テスト
 
