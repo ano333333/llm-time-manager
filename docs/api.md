@@ -292,9 +292,8 @@ data: [DONE]
     "id": "schedule-1",
     "active": true,
     "intervalMin": 5,
-    "retention_maxItems": 1000,
-    "retention_maxDays": 30,
-    "updatedAt": "2025-10-29T10:00:00Z"
+    "retention_max_items": 1000,
+    "retention_max_days": 30
   }
 }
 ```
