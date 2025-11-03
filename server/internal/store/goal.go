@@ -23,7 +23,7 @@ func (s *DefaultGoalStore) GetGoal(status []string) ([]datamodel.Goal, error) {
 	}
 	statusJoined := strings.Join(statusQuoted, ",")
 	query := fmt.Sprintf("SELECT id, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, status, created_at, updated_at FROM goals WHERE status IN (%s) ORDER BY id ASC;", statusJoined)
-	rows, err := s.DB.Query(query, statusJoined)
+	rows, err := s.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
