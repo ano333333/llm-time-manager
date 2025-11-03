@@ -15,8 +15,10 @@ const DBPathKey = "DB_PATH"
 
 var originalDBPath = ""
 
-const dbPath = "../../../data/test.db"
-const migrationsDir = "../../../migrations"
+const (
+	dbPath        = "../../../data/test.db"
+	migrationsDir = "../../../migrations"
+)
 
 func BeforeEach() (*sql.DB, error) {
 	originalDBPath = os.Getenv(DBPathKey)

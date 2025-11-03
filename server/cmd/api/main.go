@@ -12,8 +12,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const defaultDBPath = "./data/dev.db"
-const defaultPort = 8080
+const (
+	defaultDBPath = "./data/dev.db"
+	defaultPort   = 8080
+)
 
 func main() {
 	log.Println("LLM時間管理ツール - Server starting...")
