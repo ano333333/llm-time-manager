@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
@@ -23,7 +24,8 @@ func (h *CaptureScheduleHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 func (h *CaptureScheduleHandler) get(w http.ResponseWriter) {
 	captureSchedule, err := h.CaptureScheduleStore.GetActiveCaptureSchedule()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("failed to get active capture schedule: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
