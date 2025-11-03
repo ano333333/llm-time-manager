@@ -29,6 +29,7 @@ func (h *CaptureScheduleHandler) get(w http.ResponseWriter) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if captureSchedule != nil {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"schedule": map[string]interface{}{
