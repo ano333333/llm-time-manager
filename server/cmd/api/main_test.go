@@ -76,27 +76,16 @@ func insertGoals(db *sql.DB, goals []datamodel.Goal) error {
 	}
 	defer tx.Rollback()
 	for _, goal := range goals {
-		_, err := tx.Exec("INSERT INTO goals (id, status, title, description, start_date, end_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", goal.ID, goal.Status, goal.Title, goal.Description, goal.StartDate, goal.EndDate, goal.CreatedAt, goal.UpdatedAt)
+		if goal.KpiName == nil {
+			_, err := tx.Exec("INSERT INTO goals (id, status, title, description, start_date, end_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", goal.ID, goal.Status, goal.Title, goal.Description, goal.StartDate, goal.EndDate, goal.CreatedAt, goal.UpdatedAt)
+			if err != nil {
+				return fmt.Errorf("failed to insert goal: %w", err)
+			}
+			continue
+		}
+		_, err := tx.Exec("INSERT INTO goals (id, status, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", goal.ID, goal.Status, goal.Title, goal.Description, goal.StartDate, goal.EndDate, *goal.KpiName, *goal.KpiTarget, *goal.KpiUnit, goal.CreatedAt, goal.UpdatedAt)
 		if err != nil {
 			return fmt.Errorf("failed to insert goal: %w", err)
-		}
-		if goal.KpiName != nil {
-			_, err := tx.Exec("UPDATE goals SET kpi_name = ? WHERE id = ?", *goal.KpiName, goal.ID)
-			if err != nil {
-				return fmt.Errorf("failed to update goal: %w", err)
-			}
-		}
-		if goal.KpiTarget != nil {
-			_, err := tx.Exec("UPDATE goals SET kpi_target = ? WHERE id = ?", *goal.KpiTarget, goal.ID)
-			if err != nil {
-				return fmt.Errorf("failed to update goal: %w", err)
-			}
-		}
-		if goal.KpiUnit != nil {
-			_, err := tx.Exec("UPDATE goals SET kpi_unit = ? WHERE id = ?", *goal.KpiUnit, goal.ID)
-			if err != nil {
-				return fmt.Errorf("failed to update goal: %w", err)
-			}
 		}
 	}
 	if err := tx.Commit(); err != nil {
@@ -239,7 +228,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 }
 
 func TestGetGoalsIntegrate(t *testing.T) {
-	t.Run("GET /goal はquery parameterがない場合400を返す", func(t *testing.T) {
+	t.Run("GET /goal はquery parameterがない場合空配列を返す", func(t *testing.T) {
 		// Arrange
 		db, err := beforeEach()
 		if err != nil {
@@ -254,7 +243,13 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 
 		// Assert
-		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
+		response, err := getResponseBodyJson(rec)
+		assert.NoError(t, err)
+		assert.JSONEq(t, `{
+			"goals": []
+		}`, response)
 	})
 
 	t.Run("GET /goal は不正なquery parameterで400を返す", func(t *testing.T) {
@@ -437,7 +432,7 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		}`, response)
 
 		// Act(active,paused)
-		req = httptest.NewRequest(http.MethodGet, "/goal", nil)
+		req = httptest.NewRequest(http.MethodGet, "/goal?status=active,paused", nil)
 		rec = httptest.NewRecorder()
 		mux.ServeHTTP(rec, req)
 
@@ -540,6 +535,19 @@ func TestGetGoalsIntegrate(t *testing.T) {
 					"kpi_target": null,
 					"kpi_unit": null,
 					"status": "paused",
+					"created_at": "2025-10-01T00:00:00+09:00",
+					"updated_at": "2025-10-02T00:00:00+09:00"
+				},
+				{
+					"id": "goal-2",
+					"title": "Goal 2",
+					"description": "Description 2",
+					"start_date": "2025-10-02",
+					"end_date": "2025-11-02",
+					"kpi_name": "Kpi Name 2",
+					"kpi_target": 100,
+					"kpi_unit": "Kpi Unit 2",
+					"status": "done",
 					"created_at": "2025-10-01T00:00:00+09:00",
 					"updated_at": "2025-10-02T00:00:00+09:00"
 				}
