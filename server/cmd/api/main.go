@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +13,18 @@ import (
 	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
 	"github.com/joho/godotenv"
 )
+
+func setupHandlers(db *sql.DB) *http.ServeMux {
+	mux := http.NewServeMux()
+
+	// リポジトリ
+	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
+
+	// ハンドラ
+	mux.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
+
+	return mux
+}
 
 func main() {
 	log.Println("LLM時間管理ツール - Server starting...")
@@ -58,9 +71,6 @@ func main() {
 		log.Printf("failed to write to stdout: %v", err)
 	}
 
-	// リポジトリ
-	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
-
 	// PORTの取得
 	PORT, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
@@ -68,11 +78,10 @@ func main() {
 	}
 	log.Printf("Server will be running on port %d", PORT)
 
+	mux := setupHandlers(db)
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", PORT),
-		Handler: nil,
+		Handler: mux,
 	}
-
-	http.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
 	server.ListenAndServe()
 }
