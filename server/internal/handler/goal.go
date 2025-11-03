@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -33,9 +34,11 @@ func (h *GoalHandler) get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := strings.Split(statusRaw, ",")
-	for _, s := range status {
+	for i, s := range status {
+		status[i] = strings.TrimSpace(s)
+		s = status[i]
 		if s != "active" && s != "paused" && s != "done" {
-			http.Error(w, "invalid status", http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("invalid status: %s", s), http.StatusBadRequest)
 			return
 		}
 	}
