@@ -133,7 +133,15 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		assert.Equal(t, rec.Code, http.StatusOK)
 		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
-		expected, err := json.Marshal(map[string]interface{}{"schedule": schedules[1]})
+		expected, err := json.Marshal(map[string]interface{}{
+			"schedule": map[string]interface{}{
+				"id":                  schedules[1].ID,
+				"active":              schedules[1].Active,
+				"interval_min":        schedules[1].IntervalMin,
+				"retention_max_items": schedules[1].RetentionMaxItems,
+				"retention_max_days":  schedules[1].RetentionMaxDays,
+			},
+		})
 		if err != nil {
 			t.Fatalf("failed to marshal expected: %v", err)
 		}
