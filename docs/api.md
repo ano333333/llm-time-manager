@@ -158,7 +158,11 @@ data: [DONE]
 
 #### query parameter
 
-- `status` (optional): フィルタ（`active|paused|done`）
+- `status` (optional): フィルタ（`active|paused|done`）、カンマ区切り
+
+```
+GET /goals?status=active,paused
+```
 
 #### response: 200
 
