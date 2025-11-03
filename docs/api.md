@@ -158,7 +158,7 @@ data: [DONE]
 
 #### query parameter
 
-- `status` (optional): フィルタ（`active|paused|done`）、カンマ区切り
+- `status` (optional): フィルタ（`active|paused|done`）、カンマ区切り。指定されない、または空白文字列の場合、空配列を返す。
 
 ```
 GET /goals?status=active,paused
