@@ -20,7 +20,7 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = import ./nix/packages.nix { inherit pkgs; };
-          shellHook = import ./nix/shell-hook.nix;
+          shellHook = import ./nix/shell-hook.nix { inherit pkgs; };
         };
 
         apps.fmt = {

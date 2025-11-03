@@ -1,3 +1,5 @@
+{ pkgs }:
+
 ''
   echo "🚀 LLM時間管理ツール - Unified Development Environment"
   echo ""
@@ -31,6 +33,9 @@
   echo "  - prettier: $(prettier --version 2>/dev/null || echo 'installed')"
   echo "  - jq: $(jq --version 2>/dev/null || echo 'installed')"
   echo ""
+  echo "テスト環境:"
+  echo "  - Playwright: E2E/コンポーネントテスト"
+  echo ""
   echo "サポートプラットフォーム: Linux (x86_64/aarch64), macOS (x86_64/aarch64)"
   echo ""
 
@@ -41,4 +46,9 @@
   # pnpm設定（既存の設定がある場合はそれを尊重）
   export PNPM_HOME="''${PNPM_HOME:-$HOME/.local/share/pnpm}"
   export PATH="$PNPM_HOME:$PATH"
+
+  # Playwright設定
+  # Nixのplaywright-browsersパスを設定
+  export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+  export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
 ''
