@@ -320,8 +320,8 @@ data: [DONE]
 {
   "active": true,
   "intervalMin": 5,
-  "retention_maxItems": 1000,
-  "retention_maxDays": 30
+  "retention_max_items": 1000,
+  "retention_max_days": 30
 }
 ```
 
