@@ -1,6 +1,7 @@
 package integratetest
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -117,6 +118,45 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		if err := InsertGoals(db, goals); err != nil {
 			t.Fatalf("failed to insert goals: %v", err)
 		}
+		const goal0ExpectedJson = `{
+					"id": "goal-0",
+					"title": "Goal 0",
+					"description": "Description 0",
+					"start_date": "2025-10-02",
+					"end_date": "2025-11-02",
+					"kpi_name": "Kpi Name 0",
+					"kpi_target": 100,
+					"kpi_unit": "Kpi Unit 0",
+					"status": "active",
+					"created_at": "2025-10-01T00:00:00+09:00",
+					"updated_at": "2025-10-02T00:00:00+09:00"
+				}`
+		const goal1ExpectedJson = `{
+					"id": "goal-1",
+					"title": "Goal 1",
+					"description": "Description 1",
+					"start_date": "2025-10-02",
+					"end_date": "2025-11-02",
+					"kpi_name": null,
+					"kpi_target": null,
+					"kpi_unit": null,
+					"status": "paused",
+					"created_at": "2025-10-01T00:00:00+09:00",
+					"updated_at": "2025-10-02T00:00:00+09:00"
+				}`
+		const goal2ExpectedJson = `{
+					"id": "goal-2",
+					"title": "Goal 2",
+					"description": "Description 2",
+					"start_date": "2025-10-02",
+					"end_date": "2025-11-02",
+					"kpi_name": "Kpi Name 2",
+					"kpi_target": 100,
+					"kpi_unit": "Kpi Unit 2",
+					"status": "done",
+					"created_at": "2025-10-01T00:00:00+09:00",
+					"updated_at": "2025-10-02T00:00:00+09:00"
+				}`
 
 		// Act(none)
 		req := httptest.NewRequest(http.MethodGet, "/goal?status=", nil)
@@ -142,23 +182,11 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-0",
-					"title": "Goal 0",
-					"description": "Description 0",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 0",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 0",
-					"status": "active",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s
 			]
-		}`, response)
+		}`, goal0ExpectedJson), response)
 
 		// Act(paused)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=paused", nil)
@@ -170,23 +198,11 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-1",
-					"title": "Goal 1",
-					"description": "Description 1",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": null,
-					"kpi_target": null,
-					"kpi_unit": null,
-					"status": "paused",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s
 			]
-		}`, response)
+		}`, goal1ExpectedJson), response)
 
 		// Act(done)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=done", nil)
@@ -198,23 +214,11 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-2",
-					"title": "Goal 2",
-					"description": "Description 2",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 2",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 2",
-					"status": "done",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s
 			]
-		}`, response)
+		}`, goal2ExpectedJson), response)
 
 		// Act(active,paused)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=active,paused", nil)
@@ -226,36 +230,12 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-0",
-					"title": "Goal 0",
-					"description": "Description 0",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 0",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 0",
-					"status": "active",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-1",
-					"title": "Goal 1",
-					"description": "Description 1",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": null,
-					"kpi_target": null,
-					"kpi_unit": null,
-					"status": "paused",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s,
+				%s
 			]
-		}`, response)
+		}`, goal0ExpectedJson, goal1ExpectedJson), response)
 
 		// Act(active,done)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=active,done", nil)
@@ -267,36 +247,12 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-0",
-					"title": "Goal 0",
-					"description": "Description 0",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 0",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 0",
-					"status": "active",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-2",
-					"title": "Goal 2",
-					"description": "Description 2",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 2",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 2",
-					"status": "done",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s,
+				%s
 			]
-		}`, response)
+		}`, goal0ExpectedJson, goal2ExpectedJson), response)
 
 		// Act(paused,done)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=paused,done", nil)
@@ -308,36 +264,12 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-1",	
-					"title": "Goal 1",
-					"description": "Description 1",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": null,
-					"kpi_target": null,
-					"kpi_unit": null,
-					"status": "paused",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-2",
-					"title": "Goal 2",
-					"description": "Description 2",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 2",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 2",
-					"status": "done",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s,
+				%s
 			]
-		}`, response)
+		}`, goal1ExpectedJson, goal2ExpectedJson), response)
 
 		// Act(active,done)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=active,done", nil)
@@ -349,36 +281,12 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-0",
-					"title": "Goal 0",
-					"description": "Description 0",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 0",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 0",
-					"status": "active",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-2",
-					"title": "Goal 2",
-					"description": "Description 2",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 2",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 2",
-					"status": "done",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s,
+				%s
 			]
-		}`, response)
+		}`, goal0ExpectedJson, goal2ExpectedJson), response)
 
 		// Act(active,paused,done)
 		req = httptest.NewRequest(http.MethodGet, "/goal?status=active,paused,done", nil)
@@ -390,49 +298,13 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err = GetResponseBodyJson(rec)
 		assert.NoError(t, err)
-		assert.JSONEq(t, `{
+		assert.JSONEq(t, fmt.Sprintf(`{
 			"goals": [
-				{
-					"id": "goal-0",
-					"title": "Goal 0",
-					"description": "Description 0",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 0",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 0",
-					"status": "active",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-1",
-					"title": "Goal 1",
-					"description": "Description 1",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": null,
-					"kpi_target": null,
-					"kpi_unit": null,
-					"status": "paused",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				},
-				{
-					"id": "goal-2",
-					"title": "Goal 2",
-					"description": "Description 2",
-					"start_date": "2025-10-02",
-					"end_date": "2025-11-02",
-					"kpi_name": "Kpi Name 2",
-					"kpi_target": 100,
-					"kpi_unit": "Kpi Unit 2",
-					"status": "done",
-					"created_at": "2025-10-01T00:00:00+09:00",
-					"updated_at": "2025-10-02T00:00:00+09:00"
-				}
+				%s,
+				%s,
+				%s
 			]
-		}`, response)
+		}`, goal0ExpectedJson, goal1ExpectedJson, goal2ExpectedJson), response)
 	},
 	)
 }
