@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	datamodel "github.com/ano333333/llm-time-manager/server/internal/data-model"
 	"github.com/ano333333/llm-time-manager/server/internal/database"
@@ -97,6 +98,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		}
 		defer afterEach(db)
 		mux := setupHandlers(db)
+		now := time.Now()
 		schedules := []datamodel.CaptureSchedule{
 			{
 				ID:                "schedule-0",
@@ -104,6 +106,8 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 				IntervalMin:       10,
 				RetentionMaxItems: 100,
 				RetentionMaxDays:  30,
+				CreatedAt:         now,
+				UpdatedAt:         now,
 			},
 			{
 				ID:                "schedule-1",
@@ -111,6 +115,8 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 				IntervalMin:       5,
 				RetentionMaxItems: 1000,
 				RetentionMaxDays:  30,
+				CreatedAt:         now,
+				UpdatedAt:         now,
 			},
 			{
 				ID:                "schedule-2",
@@ -118,6 +124,8 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 				IntervalMin:       15,
 				RetentionMaxItems: 10000,
 				RetentionMaxDays:  30,
+				CreatedAt:         now,
+				UpdatedAt:         now,
 			},
 		}
 		if err := insertCaptureSchedules(db, schedules); err != nil {
@@ -156,6 +164,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		}
 		defer afterEach(db)
 		mux := setupHandlers(db)
+		now := time.Now()
 		schedules := []datamodel.CaptureSchedule{
 			{
 				ID:                "schedule-0",
@@ -163,6 +172,8 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 				IntervalMin:       10,
 				RetentionMaxItems: 100,
 				RetentionMaxDays:  30,
+				CreatedAt:         now,
+				UpdatedAt:         now,
 			},
 			{
 				ID:                "schedule-1",
@@ -170,6 +181,8 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 				IntervalMin:       5,
 				RetentionMaxItems: 1000,
 				RetentionMaxDays:  30,
+				CreatedAt:         now,
+				UpdatedAt:         now,
 			},
 		}
 		if err := insertCaptureSchedules(db, schedules); err != nil {
