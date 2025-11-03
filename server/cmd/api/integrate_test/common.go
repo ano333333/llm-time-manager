@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http/httptest"
 	"os"
+	"time"
 
 	datamodel "github.com/ano333333/llm-time-manager/server/internal/data-model"
 	"github.com/ano333333/llm-time-manager/server/internal/database"
@@ -46,6 +47,10 @@ func GetResponseBodyJson(rec *httptest.ResponseRecorder) (string, error) {
 		return "", fmt.Errorf("failed to read body: %w", err)
 	}
 	return string(body), nil
+}
+
+func GetJSTTimezone() *time.Location {
+	return time.FixedZone("JST", 9*60*60)
 }
 
 func InsertCaptureSchedules(db *sql.DB, schedules []datamodel.CaptureSchedule) error {

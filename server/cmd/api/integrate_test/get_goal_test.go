@@ -64,10 +64,11 @@ func TestGetGoalsIntegrate(t *testing.T) {
 		}
 		defer AfterEach(db)
 		mux := setuphandlers.SetupHandlers(db)
-		createdAt := time.Date(2025, 10, 1, 0, 0, 0, 0, time.Local)
-		updatedAt := time.Date(2025, 10, 2, 0, 0, 0, 0, time.Local)
-		startDate := time.Date(2025, 10, 2, 0, 0, 0, 0, time.Local)
-		endDate := time.Date(2025, 11, 2, 0, 0, 0, 0, time.Local)
+		timezone := GetJSTTimezone()
+		createdAt := time.Date(2025, 10, 1, 0, 0, 0, 0, timezone)
+		updatedAt := time.Date(2025, 10, 2, 0, 0, 0, 0, timezone)
+		startDate := time.Date(2025, 10, 2, 0, 0, 0, 0, timezone)
+		endDate := time.Date(2025, 11, 2, 0, 0, 0, 0, timezone)
 		kpiName0 := "Kpi Name 0"
 		kpiTarget0 := 100.0
 		kpiUnit0 := "Kpi Unit 0"
