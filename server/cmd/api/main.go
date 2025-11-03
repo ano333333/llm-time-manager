@@ -10,6 +10,7 @@ import (
 
 	"github.com/ano333333/llm-time-manager/server/internal/database"
 	"github.com/ano333333/llm-time-manager/server/internal/handler"
+	"github.com/ano333333/llm-time-manager/server/internal/store"
 	repositories "github.com/ano333333/llm-time-manager/server/internal/store"
 	"github.com/joho/godotenv"
 )
@@ -22,9 +23,11 @@ func setupHandlers(db *sql.DB) *http.ServeMux {
 
 	// リポジトリ
 	captureScheduleStore := repositories.DefaultCaptureScheduleStore{DB: db}
+	goalStore := store.DefaultGoalStore{DB: db}
 
 	// ハンドラ
 	mux.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
+	mux.Handle("/goal", &handler.GoalHandler{GoalStore: &goalStore})
 
 	return mux
 }
