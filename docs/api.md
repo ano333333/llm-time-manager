@@ -152,7 +152,7 @@ data: [DONE]
 
 ## 目標
 
-### GET /goals
+### GET /goal
 
 目標一覧取得。
 
@@ -213,7 +213,7 @@ GET /goals?status=active,paused
 - 400: query parameter が不正
 - 500: 内部エラー
 
-### POST /goals
+### POST /goal
 
 目標作成。
 
@@ -281,7 +281,7 @@ GET /goals?status=active,paused
 - created_at, updated_at は ISO8601 形式である
 - kpi_name, kpi_target, kpi_unit はすべて null かすべて非 null かのいずれかである
 
-### PATCH /goals/:id
+### PATCH /goal/:id
 
 目標更新。
 
