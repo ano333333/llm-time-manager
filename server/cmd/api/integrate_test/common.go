@@ -80,6 +80,9 @@ func InsertGoals(db *sql.DB, goals []datamodel.Goal) error {
 			}
 			continue
 		}
+		if goal.KpiTarget == nil || goal.KpiUnit == nil {
+			return fmt.Errorf("inconsistent KPI fields for goal %s: all KPI fields must be set together", goal.ID)
+		}
 		_, err := tx.Exec("INSERT INTO goals (id, status, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", goal.ID, goal.Status, goal.Title, goal.Description, goal.StartDate, goal.EndDate, *goal.KpiName, *goal.KpiTarget, *goal.KpiUnit, goal.CreatedAt, goal.UpdatedAt)
 		if err != nil {
 			return fmt.Errorf("failed to insert goal: %w", err)
