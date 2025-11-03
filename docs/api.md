@@ -161,7 +161,7 @@ data: [DONE]
 - `status` (optional): フィルタ（`active|paused|done`）、カンマ区切り。指定されない、または空白文字列の場合、空配列を返す。
 
 ```
-GET /goals?status=active,paused
+GET /goal?status=active,paused
 ```
 
 #### response: 200
@@ -237,7 +237,7 @@ GET /goals?status=active,paused
 {
   title: string,
   description: string,
-  start_data: datetime,
+  start_date: datetime,
   end_date: datetime,
   kpi_name: string | null,
   kpi_target: number | null,
