@@ -25,6 +25,9 @@ func (s *DefaultCaptureScheduleStore) GetActiveCaptureSchedule() (*datamodel.Cap
 	defer rows.Close()
 
 	if !rows.Next() {
+		if err = rows.Err(); err != nil {
+			return nil, err
+		}
 		return nil, nil
 	}
 	err = rows.Scan(&row.ID, &row.Active, &row.IntervalMin, &row.RetentionMaxItems, &row.RetentionMaxDays, &row.CreatedAt, &row.UpdatedAt)
