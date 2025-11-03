@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -85,6 +86,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
 		assert.JSONEq(t, `{"schedule": null}`, response)
@@ -139,6 +141,7 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
 		response, err := getResponseBodyJson(rec)
 		assert.NoError(t, err)
 		expected, err := json.Marshal(map[string]interface{}{
