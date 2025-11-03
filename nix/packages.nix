@@ -41,6 +41,9 @@ with pkgs;
   biome
   nodePackages.prettier
 
+  # Playwright（E2E/コンポーネントテスト用）
+  playwright-driver.browsers # Playwright browsers
+
   # Nix開発環境
   nil # Nix language server
   nixpkgs-fmt # Nixフォーマッター

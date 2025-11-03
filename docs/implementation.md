@@ -332,29 +332,54 @@ function MetricsDashboard() {
 - **フロント**: React Testing Library + Vitest
 - **バック**: Go の標準 `testing` パッケージ
 
-```go
-// テスト例
-func TestCreateTask(t *testing.T) {
-    store := NewTestStore(t)
-    defer store.Close()
+### E2E/コンポーネントテスト（Playwright）
 
-    task := &Task{
-        ID:          "task-123",
-        Title:       "テストタスク",
-        Description: "説明",
-        Due:         time.Now().Add(24 * time.Hour),
-        Status:      "todo",
-    }
+Playwrightを使用したE2Eテストとコンポーネントテストを実装しています。
 
-    err := store.CreateTask(context.Background(), task)
-    assert.NoError(t, err)
+#### テスト実行
 
-    // 取得して確認
-    got, err := store.GetTask(context.Background(), task.ID)
-    assert.NoError(t, err)
-    assert.Equal(t, task.Title, got.Title)
-}
+```bash
+cd web
+
+# ヘッドレスモードでテスト実行
+pnpm test
+
+# UIモードでテスト実行（インタラクティブ）
+pnpm test:ui
+
+# ブラウザを表示してテスト実行
+pnpm test:headed
 ```
+
+#### 初回セットアップ
+
+```bash
+cd web
+pnpm exec playwright install chromium webkit
+```
+
+#### 対象ブラウザ
+
+- Chromium（Chrome/Edge相当）
+- WebKit（Safari相当）
+
+#### テストディレクトリ構成
+
+```plaintext
+web/tests/
+├── e2e/              # E2Eテスト
+│   └── navigation.spec.ts
+└── components/       # コンポーネントテスト
+    ├── header.spec.ts
+    └── layout.spec.ts
+```
+
+#### テスト作成のベストプラクティス
+
+- **セレクタ**: role-based セレクタを優先（`getByRole`, `getByLabel`）
+- **待機**: 明示的な待機を使用（`expect().toBeVisible()`）
+- **再現性**: テストデータをモックまたは初期化
+- **独立性**: テスト間で状態を共有しない
 
 ### 統合テスト
 
