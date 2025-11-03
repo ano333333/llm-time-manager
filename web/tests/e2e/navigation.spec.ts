@@ -38,8 +38,16 @@ test.describe("ナビゲーション", () => {
   test("404ページが正しく表示される", async ({ page }) => {
     await page.goto("/non-existent-page");
 
-    // 404ページの要素確認（実装に応じて調整）
-    const notFoundElement = page.locator("body");
-    await expect(notFoundElement).toBeVisible();
+    // 404ページ固有のコンテンツを確認
+    await expect(
+      page.getByRole("heading", { name: /404.*ページが見つかりません/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/お探しのページは存在しません/),
+    ).toBeVisible();
+
+    // ホームに戻るリンクの確認
+    const homeLink = page.getByRole("link", { name: /ホームに戻る/ });
+    await expect(homeLink).toBeVisible();
   });
 });
