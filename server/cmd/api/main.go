@@ -29,9 +29,10 @@ func setupHandlers(db *sql.DB) *http.ServeMux {
 func main() {
 	log.Println("LLM時間管理ツール - Server starting...")
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("failed to load .env file: %v", err)
+	if _, err := os.Stat(".env"); os.IsExist(err) {
+		if godotenv.Load(".env") != nil {
+			log.Fatalf("failed to load .env file: %v", err)
+		}
 	}
 
 	// データベースパスの設定
