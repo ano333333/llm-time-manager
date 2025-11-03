@@ -207,6 +207,7 @@ GET /goals?status=active,paused
 - start_date, end_date は`YYYY-MM-DD`形式である
 - created_at, updated_at は ISO8601 形式である
 - kpi_name, kpi_target, kpi_unit はすべて null かすべて非 null かのいずれかである
+- goals の要素は id 昇順
 
 #### response: error
 
