@@ -237,8 +237,8 @@ GET /goal?status=active,paused
 {
   title: string,
   description: string,
-  start_date: datetime,
-  end_date: datetime,
+  start_date: string,
+  end_date: string,
   kpi_name: string | null,
   kpi_target: number | null,
   kpi_unit: string | null,
@@ -247,6 +247,7 @@ GET /goal?status=active,paused
 ```
 
 - title は空白文字(`\s`)のみで構成されてはならない
+- start_date と end_date は`"YYYY-MM-DD"`形式の string
 - start_date は end_date 以下
 - kpi_name, kpi_target, kpi_unit のいずれかが非 null ならば、それ以外の値もすべて非 null である
 - kpi_name と kpi_unit は、string ならば空白文字のみで構成されてはならない
@@ -298,8 +299,8 @@ GET /goal?status=active,paused
 {
   title?: string,
   description?: string,
-  start_data?: datetime,
-  end_date?: datetime,
+  start_data?: string,
+  end_date?: string,
   kpi_name?: string,
   kpi_target?: number,
   kpi_unit?: string,
@@ -308,6 +309,7 @@ GET /goal?status=active,paused
 ```
 
 - title は空白文字(`\s`)のみで構成されてはならない
+- start_date, end_date は`"YYYY-MM-DD"`形式の string
 - start_date が end_date より大きくなる更新は適用されない
 - kpi_name, kpi_target, kpi_unit のうち 1 つ以上が null かつ 1 つ以上が非 null になる更新は適用されない
 - kpi_name, kpi_unit は string ならば空白文字のみで構成されてはならない
