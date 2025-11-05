@@ -4,7 +4,7 @@
 
 ## チャットからタスク作成
 
-ユーザーがチャットでタスクの相談をし、LLMが提案したタスクを作成する流れ。
+ユーザーがチャットでタスクの相談をし、LLM が提案したタスクを作成する流れ。
 
 ```mermaid
 sequenceDiagram
@@ -46,38 +46,50 @@ sequenceDiagram
     participant NativeBridge
     participant WebView
     participant LocalServer
-    participant Scheduler
+    participant LLM
     participant DB
 
     User->>WebView: 「5分おきに実行」設定
     WebView->>LocalServer: PUT /capture/schedule {intervalMin:5, active:true}
     LocalServer->>DB: UPDATE schedule
-    LocalServer->>Scheduler: タイマー起動
+    LocalServer->>NativeBridge: スケジュール設定を通知
+    NativeBridge: クライアント側でタイマー起動
     LocalServer-->>WebView: OK
 
     loop 5分ごと
-        Scheduler->>NativeBridge: captureScreenshot()
         NativeBridge->>OS: キャプチャAPI呼び出し
         OS-->>NativeBridge: 画像データ
-        NativeBridge-->>Scheduler: {path, thumbPath}
-        Scheduler->>DB: INSERT screenshot
-        Scheduler->>WebView: WebSocket通知
+        NativeBridge->>WebView: 画像データ
+        WebView->>LocalServer: POST /capture/screenshot (multipart/form-data)
+        LocalServer->>LLM: 画像を分析
+        LLM-->>LocalServer: 分析結果
+        LocalServer-->>WebView: 分析結果（JSON）
+        WebView->>User: 通知として表示
     end
 
     User->>WebView: 「停止」
     WebView->>LocalServer: POST /capture/schedule/stop
-    LocalServer->>Scheduler: タイマー停止
+    LocalServer->>DB: UPDATE schedule (active=false)
+    LocalServer->>NativeBridge: スケジュール停止を通知
+    NativeBridge: タイマー停止
     LocalServer-->>WebView: OK
 ```
 
 ### 処理ステップ
 
-1. User→Capture: 「5分おきに実行」→ `PUT /capture/schedule {intervalMin:5, active:true}`
-2. Server: スケジューラ起動（Go でタイマー）
-3. Server→NativeBridge: 間隔ごとに `captureScreenshot()`
-4. User→Capture: 「停止」→ `POST /capture/schedule/stop`
+1. User→Capture: 「5 分おきに実行」→ `PUT /capture/schedule {intervalMin:5, active:true}`
+2. Server→NativeBridge: スケジュール設定を通知
+3. NativeBridge: クライアント側でタイマー起動
+4. 間隔ごとに以下を実行:
+   - NativeBridge→OS: キャプチャ API 呼び出し
+   - NativeBridge→WebView: 画像データ
+   - WebView→Server: `POST /capture/screenshot`
+   - Server→LLM: 画像を分析
+   - Server→WebView: 分析結果
+   - WebView→User: 通知として表示
+5. User→Capture: 「停止」→ `POST /capture/schedule/stop`
 
-## 目標→タスク化
+## 目標 → タスク化
 
 既存の目標からタスクを作成する流れ。
 
@@ -101,7 +113,7 @@ sequenceDiagram
 
 ### 処理ステップ
 
-1. `/goals` で目標選択→「タスクを追加」
+1. `/goals` で目標選択 →「タスクを追加」
 2. `POST /tasks` goalId 指定
 3. タスク一覧で目標フィルタを自動適用
 
@@ -122,7 +134,7 @@ sequenceDiagram
     LocalServer-->>WebView: {active: false, ...}
     WebView->>NativeBridge: requestPermission('capture')
     NativeBridge->>OS: 権限確認
-    
+
     alt 権限未許可
         OS-->>NativeBridge: 'not_determined'
         NativeBridge-->>WebView: 'not_determined'
@@ -131,7 +143,7 @@ sequenceDiagram
         WebView->>NativeBridge: requestPermission('capture')
         NativeBridge->>OS: システムダイアログ表示
         OS->>User: 権限ダイアログ表示
-        
+
         alt ユーザーが許可
             User->>OS: 許可
             OS-->>NativeBridge: 'granted'
@@ -180,7 +192,7 @@ sequenceDiagram
 
 ## チャットストリーミング
 
-LLMとのリアルタイムチャット通信。
+LLM とのリアルタイムチャット通信。
 
 ```mermaid
 sequenceDiagram
@@ -218,26 +230,29 @@ sequenceDiagram
     participant NativeBridge
     participant WebView
     participant LocalServer
-    participant Scheduler
-    participant DB
+    participant LLM
 
-    Scheduler->>NativeBridge: captureScreenshot()
-    NativeBridge-->>Scheduler: Error: PERMISSION_DENIED
-    Scheduler->>DB: INSERT error_log
-    Scheduler->>WebView: WebSocket通知: {type: "error", code: "PERMISSION_DENIED"}
+    NativeBridge->>OS: キャプチャAPI呼び出し
+    OS-->>NativeBridge: Error: PERMISSION_DENIED
+    NativeBridge-->>WebView: Error: PERMISSION_DENIED
     WebView->>User: トースト表示「キャプチャ失敗」
     WebView->>User: リトライボタン表示
 
     User->>WebView: リトライボタン押下
     WebView->>NativeBridge: requestPermission('capture')
-    
+
     alt 権限が回復
         NativeBridge-->>WebView: 'granted'
-        WebView->>LocalServer: POST /capture/schedule/start
-        LocalServer->>Scheduler: 再起動
+        NativeBridge->>OS: キャプチャAPI呼び出し
+        OS-->>NativeBridge: 画像データ
+        NativeBridge->>WebView: 画像データ
+        WebView->>LocalServer: POST /capture/screenshot
+        LocalServer->>LLM: 画像を分析
+        LLM-->>LocalServer: 分析結果
+        LocalServer-->>WebView: 分析結果
+        WebView->>User: 通知として表示
     else まだ拒否状態
         NativeBridge-->>WebView: 'denied'
         WebView->>User: 設定画面への遷移案内
     end
 ```
-

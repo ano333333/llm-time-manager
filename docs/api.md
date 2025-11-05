@@ -327,45 +327,41 @@ GET /goal?status=active,paused
 
 ## キャプチャ
 
-### GET /screenshots
+### POST /capture/screenshot
 
-スクリーンショット一覧取得。
+スクリーンショットをサーバーに送信し、LLM で分析する。
 
-#### query parameter
+#### request
 
-- `limit` (optional): 取得件数（デフォルト: 50）
-- `offset` (optional): オフセット
-- `taskId` (optional): タスク ID でフィルタ
+- `Content-Type: multipart/form-data`
+- `image`: スクリーンショット画像ファイル（PNG/JPEG）
 
 #### response: 200
 
 ```json
 {
-  "screenshots": [
-    {
-      "id": "screenshot-789",
-      "path": "/path/to/screenshot.png",
-      "thumbPath": "/path/to/thumbnail.jpg",
-      "capturedAt": "2025-10-29T10:30:00Z",
-      "mode": "scheduled",
-      "meta": {},
-      "linkedTaskId": "task-123"
-    }
-  ]
+  "message": "LLM による分析結果のテキスト",
+  "analysis": {
+    "summary": "作業内容の要約",
+    "suggestions": ["提案1", "提案2"]
+  }
 }
 ```
 
-### GET /screenshots/:id
-
-スクリーンショット画像ファイル配信。
-
-#### response: 200
-
-画像ファイル（PNG/JPEG）
-
 #### response: error
 
-- `404 Not Found` - ファイルが存在しない
+- `400 Bad Request` - リクエストが不正な場合（画像が含まれていない等）
+  ```json
+  { "code": "INVALID_REQUEST", "message": "Image file is required" }
+  ```
+- `403 Forbidden` - 権限が未許可の場合
+  ```json
+  { "code": "PERMISSION_DENIED", "message": "Screen capture not allowed" }
+  ```
+- `500 Internal Server Error` - LLM エラーまたは内部エラー
+  ```json
+  { "code": "INTERNAL_ERROR", "message": "Failed to analyze screenshot" }
+  ```
 
 ### GET /capture/schedule
 
@@ -380,9 +376,7 @@ GET /goal?status=active,paused
   "schedule": {
     "id": "schedule-1",
     "active": true,
-    "intervalMin": 5,
-    "retention_max_items": 1000,
-    "retention_max_days": 30
+    "intervalMin": 5
   }
 }
 ```
@@ -408,9 +402,7 @@ GET /goal?status=active,paused
 ```json
 {
   "active": true,
-  "intervalMin": 5,
-  "retention_max_items": 1000,
-  "retention_max_days": 30
+  "intervalMin": 5
 }
 ```
 
