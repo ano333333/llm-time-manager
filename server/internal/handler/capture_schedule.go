@@ -33,11 +33,9 @@ func (h *CaptureScheduleHandler) get(w http.ResponseWriter) {
 	if captureSchedule != nil {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"schedule": map[string]interface{}{
-				"id":                  captureSchedule.ID,
-				"active":              captureSchedule.Active,
-				"interval_min":        captureSchedule.IntervalMin,
-				"retention_max_items": captureSchedule.RetentionMaxItems,
-				"retention_max_days":  captureSchedule.RetentionMaxDays,
+				"id":           captureSchedule.ID,
+				"active":       captureSchedule.Active,
+				"interval_min": captureSchedule.IntervalMin,
 			},
 		})
 	} else {
