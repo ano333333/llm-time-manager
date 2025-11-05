@@ -47,31 +47,25 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		now := time.Now()
 		schedules := []datamodel.CaptureSchedule{
 			{
-				ID:                "schedule-0",
-				Active:            false,
-				IntervalMin:       10,
-				RetentionMaxItems: 100,
-				RetentionMaxDays:  30,
-				CreatedAt:         now,
-				UpdatedAt:         now,
+				ID:          "schedule-0",
+				Active:      false,
+				IntervalMin: 10,
+				CreatedAt:   now,
+				UpdatedAt:   now,
 			},
 			{
-				ID:                "schedule-1",
-				Active:            true,
-				IntervalMin:       5,
-				RetentionMaxItems: 1000,
-				RetentionMaxDays:  30,
-				CreatedAt:         now,
-				UpdatedAt:         now,
+				ID:          "schedule-1",
+				Active:      true,
+				IntervalMin: 5,
+				CreatedAt:   now,
+				UpdatedAt:   now,
 			},
 			{
-				ID:                "schedule-2",
-				Active:            false,
-				IntervalMin:       15,
-				RetentionMaxItems: 10000,
-				RetentionMaxDays:  30,
-				CreatedAt:         now,
-				UpdatedAt:         now,
+				ID:          "schedule-2",
+				Active:      false,
+				IntervalMin: 15,
+				CreatedAt:   now,
+				UpdatedAt:   now,
 			},
 		}
 		if err := InsertCaptureSchedules(db, schedules); err != nil {
@@ -90,11 +84,9 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		assert.NoError(t, err)
 		expected, err := json.Marshal(map[string]interface{}{
 			"schedule": map[string]interface{}{
-				"id":                  schedules[1].ID,
-				"active":              schedules[1].Active,
-				"interval_min":        schedules[1].IntervalMin,
-				"retention_max_items": schedules[1].RetentionMaxItems,
-				"retention_max_days":  schedules[1].RetentionMaxDays,
+				"id":           schedules[1].ID,
+				"active":       schedules[1].Active,
+				"interval_min": schedules[1].IntervalMin,
 			},
 		})
 		if err != nil {
@@ -114,22 +106,18 @@ func TestGetCaptureScheduleIntegrate(t *testing.T) {
 		now := time.Now()
 		schedules := []datamodel.CaptureSchedule{
 			{
-				ID:                "schedule-0",
-				Active:            true,
-				IntervalMin:       10,
-				RetentionMaxItems: 100,
-				RetentionMaxDays:  30,
-				CreatedAt:         now,
-				UpdatedAt:         now,
+				ID:          "schedule-0",
+				Active:      true,
+				IntervalMin: 10,
+				CreatedAt:   now,
+				UpdatedAt:   now,
 			},
 			{
-				ID:                "schedule-1",
-				Active:            true,
-				IntervalMin:       5,
-				RetentionMaxItems: 1000,
-				RetentionMaxDays:  30,
-				CreatedAt:         now,
-				UpdatedAt:         now,
+				ID:          "schedule-1",
+				Active:      true,
+				IntervalMin: 5,
+				CreatedAt:   now,
+				UpdatedAt:   now,
 			},
 		}
 		if err := InsertCaptureSchedules(db, schedules); err != nil {

@@ -6,7 +6,6 @@
 
 - `goals` - 目標
 - `tasks` - タスク
-- `screenshots` - スクリーンショット（内部）
 - `capture_schedules` - キャプチャスケジュール
 - `chat_messages` - チャット履歴
 
@@ -15,9 +14,6 @@
 ```mermaid
 erDiagram
   GOAL o|--o{ TASK : has
-  TASK ||--o{ SCREENSHOT : attaches
-  GOAL ||--o{ SCREENSHOT : relates
-  CAPTURE_SCHEDULE ||--o{ SCREENSHOT : produces
 
   GOAL {
     string id PK
@@ -46,22 +42,10 @@ erDiagram
     datetime createdAt
     datetime updatedAt
   }
-  SCREENSHOT {
-    string id PK
-    string path
-    string thumbPath
-    datetime capturedAt
-    string mode
-    string meta
-    string linkedTaskId FK
-    string linkedGoalId FK
-  }
   CAPTURE_SCHEDULE {
     string id PK
     bool active
     int intervalMin
-    int retention_maxItems
-    int retention_maxDays
     datetime updatedAt
   }
   CHAT_MESSAGE {
@@ -107,29 +91,14 @@ erDiagram
 | createdAt   | datetime | 作成日時                                      |
 | updatedAt   | datetime | 更新日時                                      |
 
-### SCREENSHOT（スクリーンショット）
-
-| カラム名     | 型       | 説明                               |
-| ------------ | -------- | ---------------------------------- |
-| id           | string   | 主キー（UUID）                     |
-| path         | string   | ファイルパス                       |
-| thumbPath    | string   | サムネイルパス                     |
-| capturedAt   | datetime | 撮影日時                           |
-| mode         | string   | モード（manual/scheduled）         |
-| meta         | string   | メタデータ（JSON 文字列）          |
-| linkedTaskId | string   | 関連タスク ID（外部キー、NULL 可） |
-| linkedGoalId | string   | 関連目標 ID（外部キー、NULL 可）   |
-
 ### CAPTURE_SCHEDULE（キャプチャスケジュール）
 
-| カラム名           | 型       | 説明             |
-| ------------------ | -------- | ---------------- |
-| id                 | string   | 主キー（UUID）   |
-| active             | bool     | 有効/無効        |
-| intervalMin        | int      | 実行間隔（分）   |
-| retention_maxItems | int      | 保存上限（件数） |
-| retention_maxDays  | int      | 保存上限（日数） |
-| updatedAt          | datetime | 更新日時         |
+| カラム名    | 型       | 説明           |
+| ----------- | -------- | -------------- |
+| id          | string   | 主キー（UUID） |
+| active      | bool     | 有効/無効      |
+| intervalMin | int      | 実行間隔（分） |
+| updatedAt   | datetime | 更新日時       |
 
 ### CHAT_MESSAGE（チャット履歴）
 
@@ -143,7 +112,7 @@ erDiagram
 ## 型定義（TypeScript 例）
 
 ```ts
-// 主要テーブル: goals, tasks, screenshots(内部), capture_schedules, chat_messages
+// 主要テーブル: goals, tasks, capture_schedules, chat_messages
 
 interface Goal {
   id: string;
@@ -174,23 +143,10 @@ interface Task {
   updatedAt: string;
 }
 
-interface Screenshot {
-  id: string;
-  path: string;
-  thumbPath?: string;
-  capturedAt: string;
-  mode: "manual" | "scheduled";
-  meta: Record<string, any>; // stored as JSON
-  linkedTaskId?: string;
-  linkedGoalId?: string;
-}
-
 interface CaptureSchedule {
   id: string;
   active: boolean;
   intervalMin: number;
-  retention_maxItems: number;
-  retention_maxDays: number;
   updatedAt: string;
 }
 
@@ -208,8 +164,6 @@ interface ChatMessage {
 - `tasks.status` - ステータスフィルタ用
 - `tasks.due` - 期日ソート用
 - `tasks.goalId` - 目標別タスク一覧用
-- `screenshots.capturedAt` - 時系列表示用
-- `screenshots.linkedTaskId` - タスク別スクリーンショット用
 - `chat_messages.createdAt` - 時系列表示用
 
 ## マイグレーション戦略

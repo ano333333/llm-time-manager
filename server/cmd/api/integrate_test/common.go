@@ -60,7 +60,7 @@ func InsertCaptureSchedules(db *sql.DB, schedules []datamodel.CaptureSchedule) e
 	}
 	defer tx.Rollback()
 	for _, schedule := range schedules {
-		_, err := tx.Exec("INSERT INTO capture_schedules (id, active, interval_min, retention_max_items, retention_max_days, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)", schedule.ID, schedule.Active, schedule.IntervalMin, schedule.RetentionMaxItems, schedule.RetentionMaxDays, schedule.CreatedAt, schedule.UpdatedAt)
+		_, err := tx.Exec("INSERT INTO capture_schedules (id, active, interval_min, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", schedule.ID, schedule.Active, schedule.IntervalMin, schedule.CreatedAt, schedule.UpdatedAt)
 		if err != nil {
 			return fmt.Errorf("failed to insert capture schedule: %w", err)
 		}

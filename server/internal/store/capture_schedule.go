@@ -18,7 +18,7 @@ type DefaultCaptureScheduleStore struct {
 func (s *DefaultCaptureScheduleStore) GetActiveCaptureSchedule() (*datamodel.CaptureSchedule, error) {
 	var row datamodel.CaptureSchedule
 
-	rows, err := s.DB.Query("SELECT id, active, interval_min, retention_max_items, retention_max_days, created_at, updated_at FROM capture_schedules WHERE active = 1")
+	rows, err := s.DB.Query("SELECT id, active, interval_min, created_at, updated_at FROM capture_schedules WHERE active = 1")
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (s *DefaultCaptureScheduleStore) GetActiveCaptureSchedule() (*datamodel.Cap
 		}
 		return nil, nil
 	}
-	err = rows.Scan(&row.ID, &row.Active, &row.IntervalMin, &row.RetentionMaxItems, &row.RetentionMaxDays, &row.CreatedAt, &row.UpdatedAt)
+	err = rows.Scan(&row.ID, &row.Active, &row.IntervalMin, &row.CreatedAt, &row.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
