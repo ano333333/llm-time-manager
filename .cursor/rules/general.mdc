@@ -6,8 +6,13 @@ alwaysApply: true
 
 ## コマンド仕様について
 
-- 必要な開発環境は flake.nix に定義されている devShell に追加し、devShell で開発環境が完結するようにしてください。
-- GitHub の操作は、devShell 上の`gh`コマンドを使用してください。
+- 開発中に使用するコマンドは、全て Nix の devShell 上で行ってください。
+
+```bash
+nix develop -c ...
+```
+
+- 特に GitHub の操作は`gh`コマンドで行ってください。
 
 ## 参照するファイルについて
 
