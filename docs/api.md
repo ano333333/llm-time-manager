@@ -418,6 +418,27 @@ GET /goal?status=active,paused
 }
 ```
 
+#### response: error
+
+- `400 Bad Request` - リクエストパラメータが不正な場合
+
+```json
+{
+  "message": "invalid parameter",
+  "target": "id"
+}
+```
+
+- `400 Bad Request` - アクティブなスケジュールがない場合
+
+```json
+{
+  "message": "no active capture schedule"
+}
+```
+
+- `500 Internal Server Error` - 内部エラー時
+
 ### POST /capture/schedule/start
 
 定期キャプチャを有効化。
