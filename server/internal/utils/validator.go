@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -31,11 +32,18 @@ func isBoolean(fl validator.FieldLevel) bool {
 	return true
 }
 
+var (
+	validatorInstance *validator.Validate
+	once              sync.Once
+)
+
 func GetValidator() *validator.Validate {
-	validate := validator.New()
-	validate.RegisterValidation("is_integer", isInteger)
-	validate.RegisterValidation("is_boolean", isBoolean)
-	return validate
+	once.Do(func() {
+		validatorInstance = validator.New()
+		validatorInstance.RegisterValidation("is_integer", isInteger)
+		validatorInstance.RegisterValidation("is_boolean", isBoolean)
+	})
+	return validatorInstance
 }
 
 func GetFirstValidationErrorTarget(err error) string {
