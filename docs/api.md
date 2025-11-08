@@ -402,9 +402,18 @@ GET /goal?status=active,paused
 ```json
 {
   "active": true,
-  "intervalMin": 5
+  "interval_min": 5
 }
 ```
+
+```ts
+{
+  active: boolean,
+  interval_min: number,
+}
+```
+
+- `interval_min`は正整数
 
 #### response: 200
 
@@ -413,7 +422,7 @@ GET /goal?status=active,paused
   "schedule": {
     "id": "schedule-1",
     "active": true,
-    "intervalMin": 5
+    "interval_min": 5
   }
 }
 ```
