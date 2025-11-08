@@ -184,7 +184,7 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 		}
 
 		// Act
-		req := httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer([]byte(`{"active": false, "interval_min": 5}`)))
+		req := httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer([]byte(`{"active": true, "interval_min": 5}`)))
 		rec := httptest.NewRecorder()
 		mux.ServeHTTP(rec, req)
 
@@ -194,7 +194,11 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 		response, err := GetResponseBodyJson(rec)
 		assert.NoError(t, err)
 		expected, _ := json.Marshal(map[string]interface{}{
-			"schedule": nil,
+			"schedule": map[string]interface{}{
+				"id":           "schedule-0",
+				"active":       true,
+				"interval_min": 5,
+			},
 		})
 		assert.JSONEq(t, string(expected), response)
 		reqGet := httptest.NewRequest(http.MethodGet, "/capture/schedule", nil)
@@ -202,5 +206,20 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 		mux.ServeHTTP(recGet, reqGet)
 		responseGet, _ := GetResponseBodyJson(recGet)
 		assert.JSONEq(t, string(expected), responseGet)
+
+		// Act
+		req = httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer([]byte(`{"active": false, "interval_min": 5}`)))
+		rec = httptest.NewRecorder()
+		mux.ServeHTTP(rec, req)
+
+		// Assert
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "application/json", strings.ToLower(rec.Header().Get("Content-Type")))
+		response, err = GetResponseBodyJson(rec)
+		assert.NoError(t, err)
+		expected, _ = json.Marshal(map[string]interface{}{
+			"schedule": nil,
+		})
+		assert.JSONEq(t, string(expected), response)
 	})
 }
