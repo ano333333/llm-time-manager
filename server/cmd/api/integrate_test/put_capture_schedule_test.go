@@ -3,7 +3,6 @@ package integratetest
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -67,7 +66,7 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 		mux := setuphandlers.SetupHandlers(db)
 		validator := validator.New()
 
-		for i, request := range requests {
+		for _, request := range requests {
 			// Act
 			body, _ := json.Marshal(request)
 			req := httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer(body))
@@ -86,8 +85,6 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 			if err := validator.Struct(typedResponse); err != nil {
 				t.Fatalf("failed to validate response: %v", err)
 			}
-
-			log.Printf("request %d: %v", i, request)
 		}
 	})
 
