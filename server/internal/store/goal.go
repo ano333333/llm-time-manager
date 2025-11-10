@@ -75,21 +75,7 @@ func (s *DefaultGoalStore) CreateGoal(tx Transaction, id *string, title string, 
 		args = append(args, uuid.String())
 	}
 	args = append(args, title, description, startDate, endDate)
-	if kpiName != nil {
-		args = append(args, *kpiName)
-	} else {
-		args = append(args, nil)
-	}
-	if kpiTarget != nil {
-		args = append(args, *kpiTarget)
-	} else {
-		args = append(args, nil)
-	}
-	if kpiUnit != nil {
-		args = append(args, *kpiUnit)
-	} else {
-		args = append(args, nil)
-	}
+	args = append(args, valueOrNil(kpiName), valueOrNil(kpiTarget), valueOrNil(kpiUnit))
 	args = append(args, status)
 	result := defaultTx.Tx.QueryRow(
 		`INSERT INTO goals 
@@ -104,4 +90,12 @@ func (s *DefaultGoalStore) CreateGoal(tx Transaction, id *string, title string, 
 	}
 
 	return goal, nil
+}
+
+// 非nilの場合は*valueを、nilの場合はnilを返す
+func valueOrNil[T any](value *T) any {
+	if value == nil {
+		return nil
+	}
+	return *value
 }
