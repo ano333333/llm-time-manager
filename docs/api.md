@@ -413,7 +413,7 @@ GET /goal?status=active,paused
 }
 ```
 
-- `interval_min`は正整数
+- `interval_min`は 1440(=24 時間)以下の正整数
 
 #### response: 200
 
