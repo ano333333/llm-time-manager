@@ -434,7 +434,7 @@ GET /goal?status=active,paused
 ```json
 {
   "message": "invalid parameter",
-  "target": "id"
+  "target": "active"
 }
 ```
 
@@ -442,7 +442,7 @@ GET /goal?status=active,paused
 
 ```json
 {
-  "message": "no active capture schedule"
+  "message": "no active capture schedule found"
 }
 ```
 
