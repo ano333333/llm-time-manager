@@ -263,6 +263,7 @@ func TestPostGoalIntegrate(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, recGetWithKpi.Code)
 		assert.Equal(t, "application/json", strings.ToLower(recGetWithKpi.Header().Get("Content-Type")))
+		assert.Equal(t, 1, len(responseResultGetWithKpi.Goals))
 		assert.Equal(t, responseResultWithKpi.Goal.ID, responseResultGetWithKpi.Goals[0].ID)
 		assert.Equal(t, responseResultWithKpi.Goal.Title, responseResultGetWithKpi.Goals[0].Title)
 		assert.Equal(t, responseResultWithKpi.Goal.Description, responseResultGetWithKpi.Goals[0].Description)
@@ -289,6 +290,7 @@ func TestPostGoalIntegrate(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, recGetWithoutKpi.Code)
 		assert.Equal(t, "application/json", strings.ToLower(recGetWithoutKpi.Header().Get("Content-Type")))
+		assert.Equal(t, 1, len(responseResultGetWithoutKpi.Goals))
 		assert.Equal(t, responseResultWithoutKpi.Goal.ID, responseResultGetWithoutKpi.Goals[0].ID)
 		assert.Equal(t, responseResultWithoutKpi.Goal.Title, responseResultGetWithoutKpi.Goals[0].Title)
 		assert.Equal(t, responseResultWithoutKpi.Goal.Description, responseResultGetWithoutKpi.Goals[0].Description)
