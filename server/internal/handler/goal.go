@@ -205,7 +205,7 @@ func validatePostRequestBody(r *http.Request) (postRequestBody, *errorResponse) 
 
 	validator := utils.GetValidator()
 	type postRequestBodyValidation struct {
-		Title       any `json:"title" validate:"required,min=1,max=255,is_string,not_consists_of_whitespaces"`
+		Title       any `json:"title" validate:"required,min=1,max=255,is_string,not_only_whitespaces"`
 		Description any `json:"description" validate:"required,is_string"`
 		StartDate   any `json:"start_date" validate:"required,is_string,datetime=2006-01-02"`
 		EndDate     any `json:"end_date" validate:"required,is_string,datetime=2006-01-02"`

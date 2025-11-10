@@ -53,7 +53,7 @@ func isNullableString(fl validator.FieldLevel) bool {
 	return (fl.Field().Kind() == reflect.Interface && fl.Field().IsNil()) || isString(fl)
 }
 
-func isNotConsistedOfWhitespaces(fl validator.FieldLevel) bool {
+func isNotOnlyWhitespaces(fl validator.FieldLevel) bool {
 	if fl.Field().Kind() != reflect.String {
 		return false
 	}
@@ -85,7 +85,7 @@ func GetValidator() *validator.Validate {
 		validatorInstance.RegisterValidation("is_boolean", isBoolean)
 		validatorInstance.RegisterValidation("is_string", isString)
 		validatorInstance.RegisterValidation("is_nullable_string", isNullableString)
-		validatorInstance.RegisterValidation("not_consists_of_whitespaces", isNotConsistedOfWhitespaces)
+		validatorInstance.RegisterValidation("not_only_whitespaces", isNotOnlyWhitespaces)
 	})
 	return validatorInstance
 }
