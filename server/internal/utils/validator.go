@@ -25,6 +25,18 @@ func isInteger(fl validator.FieldLevel) bool {
 	return matched
 }
 
+func isFloat64(fl validator.FieldLevel) bool {
+	if fl.Field().Kind() != reflect.Float64 {
+		return false
+	}
+	return true
+}
+
+func isNullableFloat64(fl validator.FieldLevel) bool {
+	// 対象値がnullの場合Kindは何故かreflect.Interfaceになる
+	return (fl.Field().Kind() == reflect.Interface && fl.Field().IsNil()) || isFloat64(fl)
+}
+
 func isBoolean(fl validator.FieldLevel) bool {
 	if fl.Field().Kind() != reflect.Bool {
 		return false
@@ -32,16 +44,48 @@ func isBoolean(fl validator.FieldLevel) bool {
 	return true
 }
 
+func isString(fl validator.FieldLevel) bool {
+	return fl.Field().Kind() == reflect.String
+}
+
+func isNullableString(fl validator.FieldLevel) bool {
+	// 対象値がnullの場合Kindは何故かreflect.Interfaceになる
+	return (fl.Field().Kind() == reflect.Interface && fl.Field().IsNil()) || isString(fl)
+}
+
+func isNotConsistedOfWhitespaces(fl validator.FieldLevel) bool {
+	if fl.Field().Kind() != reflect.String {
+		return false
+	}
+	fieldString := fl.Field().String()
+	return strings.TrimSpace(fieldString) != ""
+}
+
 var (
 	validatorInstance *validator.Validate
 	once              sync.Once
 )
 
+// 独自バリデーションルールを加えたvalidator.Validateを返す
+//
+// 独自バリデーションルール:
+// - is_integer: 整数かどうかをチェック
+// - is_float64: float64かどうかをチェック
+// - is_nullable_float64: float64またはnullであるかどうかをチェック
+// - is_boolean: 真偽値かどうかをチェック
+// - is_string: 文字列かどうかをチェック
+// - is_nullable_string: 文字列またはnullであるかどうかをチェック
+// - not_consists_of_whitespaces: 空白文字のみで構成されていないかどうかをチェック
 func GetValidator() *validator.Validate {
 	once.Do(func() {
 		validatorInstance = validator.New()
 		validatorInstance.RegisterValidation("is_integer", isInteger)
+		validatorInstance.RegisterValidation("is_float64", isFloat64)
+		validatorInstance.RegisterValidation("is_nullable_float64", isNullableFloat64)
 		validatorInstance.RegisterValidation("is_boolean", isBoolean)
+		validatorInstance.RegisterValidation("is_string", isString)
+		validatorInstance.RegisterValidation("is_nullable_string", isNullableString)
+		validatorInstance.RegisterValidation("not_consists_of_whitespaces", isNotConsistedOfWhitespaces)
 	})
 	return validatorInstance
 }

@@ -5,12 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	datamodel "github.com/ano333333/llm-time-manager/server/internal/data-model"
+	"github.com/google/uuid"
 )
 
 type GoalStore interface {
 	GetGoal(tx Transaction, status []string) ([]datamodel.Goal, error)
+	// goalsテーブルにinsertする。新規作成されたGoalを返す。
+	//
+	// idが指定されていない場合はUUIDを生成してinsertする。
+	// kpi_*のnull/非nullが揃っているかチェックしない。
+	CreateGoal(tx Transaction, id *string, title string, description string, startDate time.Time, endDate time.Time, kpiName *string, kpiTarget *float64, kpiUnit *string, status string) (datamodel.Goal, error)
 }
 
 type DefaultGoalStore struct {
@@ -47,4 +54,54 @@ func (s *DefaultGoalStore) GetGoal(tx Transaction, status []string) ([]datamodel
 		return nil, err
 	}
 	return goals, nil
+}
+
+func (s *DefaultGoalStore) CreateGoal(tx Transaction, id *string, title string, description string, startDate time.Time, endDate time.Time, kpiName *string, kpiTarget *float64, kpiUnit *string, status string) (datamodel.Goal, error) {
+	emptyModel := datamodel.Goal{}
+
+	defaultTx, ok := tx.(DefaultTransaction)
+	if !ok {
+		return emptyModel, errors.New("transaction is not DefaultTransaction")
+	}
+
+	args := []any{}
+	if id != nil {
+		args = append(args, *id)
+	} else {
+		uuid, err := uuid.NewRandom()
+		if err != nil {
+			return emptyModel, err
+		}
+		args = append(args, uuid.String())
+	}
+	args = append(args, title, description, startDate, endDate)
+	if kpiName != nil {
+		args = append(args, *kpiName)
+	} else {
+		args = append(args, nil)
+	}
+	if kpiTarget != nil {
+		args = append(args, *kpiTarget)
+	} else {
+		args = append(args, nil)
+	}
+	if kpiUnit != nil {
+		args = append(args, *kpiUnit)
+	} else {
+		args = append(args, nil)
+	}
+	args = append(args, status)
+	result := defaultTx.Tx.QueryRow(
+		`INSERT INTO goals 
+		(id, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, status)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		RETURNING id, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, status, created_at, updated_at;`,
+		args...,
+	)
+	var goal datamodel.Goal
+	if err := result.Scan(&goal.ID, &goal.Title, &goal.Description, &goal.StartDate, &goal.EndDate, &goal.KpiName, &goal.KpiTarget, &goal.KpiUnit, &goal.Status, &goal.CreatedAt, &goal.UpdatedAt); err != nil {
+		return emptyModel, err
+	}
+
+	return goal, nil
 }
