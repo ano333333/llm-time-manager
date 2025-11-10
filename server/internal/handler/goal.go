@@ -129,132 +129,21 @@ func (h *GoalHandler) get(r *http.Request) (map[string]interface{}, *errorRespon
 	}, nil
 }
 
-func (h *GoalHandler) post(r *http.Request) (map[string]interface{}, *errorResponse) {
-	validator := utils.GetValidator()
+type postRequestBody struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	StartDate   string   `json:"start_date"`
+	EndDate     string   `json:"end_date"`
+	KpiName     *string  `json:"kpi_name"`
+	KpiTarget   *float64 `json:"kpi_target"`
+	KpiUnit     *string  `json:"kpi_unit"`
+	Status      string   `json:"status"`
+}
 
-	type RequestBodyValidation struct {
-		Title       any `json:"title" validate:"required,min=1,max=255,is_string,not_consists_of_whitespaces"`
-		Description any `json:"description" validate:"required,is_string"`
-		StartDate   any `json:"start_date" validate:"required,is_string,datetime=2006-01-02"`
-		EndDate     any `json:"end_date" validate:"required,is_string,datetime=2006-01-02"`
-		KpiName     any `json:"kpi_name" validate:"required_with_all=KpiTarget KpiUnit,is_nullable_string"`
-		KpiTarget   any `json:"kpi_target" validate:"required_with_all=KpiName KpiUnit,is_nullable_float64"`
-		KpiUnit     any `json:"kpi_unit" validate:"required_with_all=KpiName KpiTarget,is_nullable_string"`
-		Status      any `json:"status" validate:"required,is_string,oneof=active paused done"`
-	}
-	type RequestBody struct {
-		Title       string   `json:"title"`
-		Description string   `json:"description"`
-		StartDate   string   `json:"start_date"`
-		EndDate     string   `json:"end_date"`
-		KpiName     *string  `json:"kpi_name"`
-		KpiTarget   *float64 `json:"kpi_target"`
-		KpiUnit     *string  `json:"kpi_unit"`
-		Status      string   `json:"status"`
-	}
-	var requestBodyValidation RequestBodyValidation
-	if err := json.NewDecoder(r.Body).Decode(&requestBodyValidation); err != nil {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid JSON format",
-			},
-			LogMessage: "failed to decode request body",
-			Err:        err,
-		}
-	}
-	if err := validator.Struct(requestBodyValidation); err != nil {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid parameter",
-				"target":  utils.GetFirstValidationErrorTarget(err),
-			},
-			LogMessage: "failed to validate request body",
-			Err:        err,
-		}
-	}
-	var requestBody RequestBody
-	requestBody.Title = requestBodyValidation.Title.(string)
-	requestBody.Description = requestBodyValidation.Description.(string)
-	requestBody.StartDate = requestBodyValidation.StartDate.(string)
-	requestBody.EndDate = requestBodyValidation.EndDate.(string)
-	if requestBodyValidation.KpiName != nil {
-		requestBody.KpiName = new(string)
-		*requestBody.KpiName = requestBodyValidation.KpiName.(string)
-	}
-	if requestBodyValidation.KpiTarget != nil {
-		requestBody.KpiTarget = new(float64)
-		*requestBody.KpiTarget = requestBodyValidation.KpiTarget.(float64)
-	}
-	if requestBodyValidation.KpiUnit != nil {
-		requestBody.KpiUnit = new(string)
-		*requestBody.KpiUnit = requestBodyValidation.KpiUnit.(string)
-	}
-	requestBody.Status = requestBodyValidation.Status.(string)
-	// validationでのタグチェックが面倒なものは自前チェック
-	// validationのgtefieldはNumbersまたはtime.~にしか効かない
-	if requestBody.StartDate > requestBody.EndDate {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid parameter",
-				"target":  "end_date",
-			},
-			LogMessage: "start date is after end date",
-			Err:        nil,
-		}
-	}
-	// kpi_nameとkpi_unitの非空白文字チェックもvalidatorだとnullableの処理が面倒
-	if requestBody.KpiName != nil && strings.TrimSpace(*requestBody.KpiName) == "" {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid parameter",
-				"target":  "kpi_name",
-			},
-			LogMessage: "kpi name is empty",
-			Err:        nil,
-		}
-	}
-	if requestBody.KpiUnit != nil && strings.TrimSpace(*requestBody.KpiUnit) == "" {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid parameter",
-				"target":  "kpi_unit",
-			},
-			LogMessage: "kpi unit is empty",
-			Err:        nil,
-		}
-	}
-	// kpi_*のnull/非nullが揃っているか
-	target := ""
-	if requestBody.KpiName != nil {
-		if requestBody.KpiTarget == nil {
-			target = "kpi_target"
-		}
-		if requestBody.KpiUnit == nil {
-			target = "kpi_unit"
-		}
-	} else {
-		if requestBody.KpiTarget != nil {
-			target = "kpi_target"
-		}
-		if requestBody.KpiUnit != nil {
-			target = "kpi_unit"
-		}
-	}
-	if target != "" {
-		return nil, &errorResponse{
-			StatusCode: http.StatusBadRequest,
-			Body: map[string]interface{}{
-				"message": "invalid parameter",
-				"target":  target,
-			},
-			LogMessage: "kpi_* is not consistent with kpi_name",
-			Err:        nil,
-		}
+func (h *GoalHandler) post(r *http.Request) (map[string]interface{}, *errorResponse) {
+	requestBody, errResponse := validatePostRequestBody(r)
+	if errResponse != nil {
+		return nil, errResponse
 	}
 
 	startDate, _ := time.Parse("2006-01-02", requestBody.StartDate)
@@ -309,4 +198,125 @@ func (h *GoalHandler) post(r *http.Request) (map[string]interface{}, *errorRespo
 			"updated_at":  goal.UpdatedAt.In(timezone).Format(time.RFC3339),
 		},
 	}, nil
+}
+
+func validatePostRequestBody(r *http.Request) (postRequestBody, *errorResponse) {
+	emptyRequestBody := postRequestBody{}
+
+	validator := utils.GetValidator()
+	type postRequestBodyValidation struct {
+		Title       any `json:"title" validate:"required,min=1,max=255,is_string,not_consists_of_whitespaces"`
+		Description any `json:"description" validate:"required,is_string"`
+		StartDate   any `json:"start_date" validate:"required,is_string,datetime=2006-01-02"`
+		EndDate     any `json:"end_date" validate:"required,is_string,datetime=2006-01-02"`
+		KpiName     any `json:"kpi_name" validate:"required_with_all=KpiTarget KpiUnit,is_nullable_string"`
+		KpiTarget   any `json:"kpi_target" validate:"required_with_all=KpiName KpiUnit,is_nullable_float64"`
+		KpiUnit     any `json:"kpi_unit" validate:"required_with_all=KpiName KpiTarget,is_nullable_string"`
+		Status      any `json:"status" validate:"required,is_string,oneof=active paused done"`
+	}
+	var requestBodyValidation postRequestBodyValidation
+	if err := json.NewDecoder(r.Body).Decode(&requestBodyValidation); err != nil {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid JSON format",
+			},
+			LogMessage: "failed to decode request body",
+			Err:        err,
+		}
+	}
+	if err := validator.Struct(requestBodyValidation); err != nil {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid parameter",
+				"target":  utils.GetFirstValidationErrorTarget(err),
+			},
+			LogMessage: "failed to validate request body",
+			Err:        err,
+		}
+	}
+	var requestBody postRequestBody
+	requestBody.Title = requestBodyValidation.Title.(string)
+	requestBody.Description = requestBodyValidation.Description.(string)
+	requestBody.StartDate = requestBodyValidation.StartDate.(string)
+	requestBody.EndDate = requestBodyValidation.EndDate.(string)
+	if requestBodyValidation.KpiName != nil {
+		requestBody.KpiName = new(string)
+		*requestBody.KpiName = requestBodyValidation.KpiName.(string)
+	}
+	if requestBodyValidation.KpiTarget != nil {
+		requestBody.KpiTarget = new(float64)
+		*requestBody.KpiTarget = requestBodyValidation.KpiTarget.(float64)
+	}
+	if requestBodyValidation.KpiUnit != nil {
+		requestBody.KpiUnit = new(string)
+		*requestBody.KpiUnit = requestBodyValidation.KpiUnit.(string)
+	}
+	requestBody.Status = requestBodyValidation.Status.(string)
+	// validationでのタグチェックが面倒なものは自前チェック
+	// validationのgtefieldはNumbersまたはtime.~にしか効かない
+	if requestBody.StartDate > requestBody.EndDate {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid parameter",
+				"target":  "end_date",
+			},
+			LogMessage: "start date is after end date",
+			Err:        nil,
+		}
+	}
+	// kpi_nameとkpi_unitの非空白文字チェックもvalidatorだとnullableの処理が面倒
+	if requestBody.KpiName != nil && strings.TrimSpace(*requestBody.KpiName) == "" {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid parameter",
+				"target":  "kpi_name",
+			},
+			LogMessage: "kpi name is empty",
+			Err:        nil,
+		}
+	}
+	if requestBody.KpiUnit != nil && strings.TrimSpace(*requestBody.KpiUnit) == "" {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid parameter",
+				"target":  "kpi_unit",
+			},
+			LogMessage: "kpi unit is empty",
+			Err:        nil,
+		}
+	}
+	// kpi_*のnull/非nullが揃っているか
+	target := ""
+	if requestBody.KpiName != nil {
+		if requestBody.KpiTarget == nil {
+			target = "kpi_target"
+		}
+		if requestBody.KpiUnit == nil {
+			target = "kpi_unit"
+		}
+	} else {
+		if requestBody.KpiTarget != nil {
+			target = "kpi_target"
+		}
+		if requestBody.KpiUnit != nil {
+			target = "kpi_unit"
+		}
+	}
+	if target != "" {
+		return emptyRequestBody, &errorResponse{
+			StatusCode: http.StatusBadRequest,
+			Body: map[string]interface{}{
+				"message": "invalid parameter",
+				"target":  target,
+			},
+			LogMessage: "kpi_* is not consistent with kpi_name",
+			Err:        nil,
+		}
+	}
+	return requestBody, nil
 }
