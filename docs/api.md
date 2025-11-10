@@ -283,6 +283,27 @@ GET /goal?status=active,paused
 - created_at, updated_at は ISO8601 形式である
 - kpi_name, kpi_target, kpi_unit はすべて null かすべて非 null かのいずれかである
 
+#### response: error
+
+- `400 Bad Request` - JSON パース失敗時
+
+```json
+{
+  "message": "invalid JSON format"
+}
+```
+
+- `400 Bad Request` - リクエストパラメータが不正な場合
+
+```json
+{
+  "message": "invalid parameter",
+  "target": "start_date"
+}
+```
+
+- `500 Internal Server Error` - 内部エラー時
+
 ### PATCH /goal/:id
 
 目標更新。
