@@ -57,6 +57,10 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 				"active":       true,
 				"interval_min": 0,
 			},
+			{
+				"active":       true,
+				"interval_min": 1441,
+			},
 		}
 		db, err := BeforeEach()
 		if err != nil {
@@ -184,7 +188,7 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 		}
 
 		// Act
-		req := httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer([]byte(`{"active": true, "interval_min": 5}`)))
+		req := httptest.NewRequest(http.MethodPut, "/capture/schedule", bytes.NewBuffer([]byte(`{"active": true, "interval_min": 1440}`)))
 		rec := httptest.NewRecorder()
 		mux.ServeHTTP(rec, req)
 
@@ -197,7 +201,7 @@ func TestPutCaptureScheduleIntegrate(t *testing.T) {
 			"schedule": map[string]interface{}{
 				"id":           "schedule-0",
 				"active":       true,
-				"interval_min": 5,
+				"interval_min": 1440,
 			},
 		})
 		assert.JSONEq(t, string(expected), response)

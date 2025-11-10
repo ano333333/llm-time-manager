@@ -66,7 +66,7 @@ func (h *CaptureScheduleHandler) put(w http.ResponseWriter, r *http.Request) {
 
 	type RequestBodyValidation struct {
 		Active      any `json:"active" validate:"required,is_boolean"`
-		IntervalMin any `json:"interval_min" validate:"required,is_integer,min=1"`
+		IntervalMin any `json:"interval_min" validate:"required,is_integer,min=1,max=1440"`
 	}
 	type RequestBody struct {
 		Active      bool `json:"active"`
