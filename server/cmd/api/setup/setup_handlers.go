@@ -14,9 +14,13 @@ func SetupHandlers(db *sql.DB) *http.ServeMux {
 	// リポジトリ
 	captureScheduleStore := store.DefaultCaptureScheduleStore{DB: db}
 	goalStore := store.DefaultGoalStore{DB: db}
+	transactionStore := store.DefaultTransactionStore{DB: db}
 
 	// ハンドラ
-	mux.Handle("/capture/schedule", &handler.CaptureScheduleHandler{CaptureScheduleStore: &captureScheduleStore})
+	mux.Handle("/capture/schedule", &handler.CaptureScheduleHandler{
+		CaptureScheduleStore: &captureScheduleStore,
+		TransactionStore:     &transactionStore,
+	})
 	mux.Handle("/goal", &handler.GoalHandler{GoalStore: &goalStore})
 
 	return mux

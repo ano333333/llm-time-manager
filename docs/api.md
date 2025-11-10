@@ -376,7 +376,7 @@ GET /goal?status=active,paused
   "schedule": {
     "id": "schedule-1",
     "active": true,
-    "intervalMin": 5
+    "interval_min": 5
   }
 }
 ```
@@ -402,9 +402,18 @@ GET /goal?status=active,paused
 ```json
 {
   "active": true,
-  "intervalMin": 5
+  "interval_min": 5
 }
 ```
+
+```ts
+{
+  active: boolean,
+  interval_min: number,
+}
+```
+
+- `interval_min`は 1440(=24 時間)以下の正整数
 
 #### response: 200
 
@@ -413,10 +422,31 @@ GET /goal?status=active,paused
   "schedule": {
     "id": "schedule-1",
     "active": true,
-    "intervalMin": 5
+    "interval_min": 5
   }
 }
 ```
+
+#### response: error
+
+- `400 Bad Request` - リクエストパラメータが不正な場合
+
+```json
+{
+  "message": "invalid parameter",
+  "target": "active"
+}
+```
+
+- `400 Bad Request` - アクティブなスケジュールがない場合
+
+```json
+{
+  "message": "no active capture schedule found"
+}
+```
+
+- `500 Internal Server Error` - 内部エラー時
 
 ### POST /capture/schedule/start
 
