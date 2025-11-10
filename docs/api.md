@@ -376,7 +376,7 @@ GET /goal?status=active,paused
   "schedule": {
     "id": "schedule-1",
     "active": true,
-    "intervalMin": 5
+    "interval_min": 5
   }
 }
 ```
