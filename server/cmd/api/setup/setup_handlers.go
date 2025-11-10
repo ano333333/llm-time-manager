@@ -21,7 +21,10 @@ func SetupHandlers(db *sql.DB) *http.ServeMux {
 		CaptureScheduleStore: &captureScheduleStore,
 		TransactionStore:     &transactionStore,
 	})
-	mux.Handle("/goal", &handler.GoalHandler{GoalStore: &goalStore})
+	mux.Handle("/goal", &handler.GoalHandler{
+		GoalStore:        &goalStore,
+		TransactionStore: &transactionStore,
+	})
 
 	return mux
 }

@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -9,21 +10,25 @@ import (
 )
 
 type GoalStore interface {
-	GetGoal(status []string) ([]datamodel.Goal, error)
+	GetGoal(tx Transaction, status []string) ([]datamodel.Goal, error)
 }
 
 type DefaultGoalStore struct {
 	DB *sql.DB
 }
 
-func (s *DefaultGoalStore) GetGoal(status []string) ([]datamodel.Goal, error) {
+func (s *DefaultGoalStore) GetGoal(tx Transaction, status []string) ([]datamodel.Goal, error) {
+	defaultTx, ok := tx.(DefaultTransaction)
+	if !ok {
+		return nil, errors.New("transaction is not DefaultTransaction")
+	}
 	statusQuoted := make([]string, 0)
 	for _, s := range status {
 		statusQuoted = append(statusQuoted, fmt.Sprintf("'%s'", s))
 	}
 	statusJoined := strings.Join(statusQuoted, ",")
 	query := fmt.Sprintf("SELECT id, title, description, start_date, end_date, kpi_name, kpi_target, kpi_unit, status, created_at, updated_at FROM goals WHERE status IN (%s) ORDER BY id ASC;", statusJoined)
-	rows, err := s.DB.Query(query)
+	rows, err := defaultTx.Tx.Query(query)
 	if err != nil {
 		return nil, err
 	}

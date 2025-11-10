@@ -11,7 +11,8 @@ import (
 )
 
 type GoalHandler struct {
-	GoalStore store.GoalStore
+	GoalStore        store.GoalStore
+	TransactionStore store.TransactionStore
 }
 
 func (h *GoalHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -43,8 +44,19 @@ func (h *GoalHandler) get(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	goals, err := h.GoalStore.GetGoal(status)
+	tx, err := h.TransactionStore.Begin()
 	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+	defer tx.Rollback()
+
+	goals, err := h.GoalStore.GetGoal(tx, status)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+	if err := tx.Commit(); err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
